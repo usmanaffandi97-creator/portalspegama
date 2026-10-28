@@ -247,13 +247,16 @@
               <span>Portal Mandiri Siswa</span>
             </div>
             <h2 class="text-xl sm:text-2xl font-bold tracking-tight" id="lblSiswaNama">Ahmad Fauzan Pratama</h2>
-            <p class="text-xs text-blue-100 font-mono mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-1">
+            <div class="text-xs text-blue-100 font-mono mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-1">
               <span>Kelas: <b id="lblSiswaKelas" class="font-sans">8-A</b></span>
               <span>&bull;</span>
               <span>NISN: <b id="lblSiswaNisn">0081234567</b></span>
+            </div>
+            <div class="text-xs text-blue-200 mt-1 flex flex-wrap items-center gap-x-3 gap-y-1">
+              <span>Wali Kelas (Rombel): <b id="lblSiswaWali" class="text-white">-</b></span>
               <span>&bull;</span>
-              <span>Wali: <span id="lblSiswaWali">-</span></span>
-            </p>
+              <span>Guru Wali (Pembina): <b id="lblSiswaGuruWali" class="text-amber-300">-</b></span>
+            </div>
             <p class="text-xs text-blue-200 mt-1.5 flex items-center gap-1.5">
               <i data-lucide="phone" class="w-3.5 h-3.5 text-blue-300"></i>
               <span>No. HP / WA Orang Tua: <b id="lblSiswaHpOrtu" class="font-mono text-white tracking-wider">081234567890</b></span>
@@ -387,13 +390,16 @@
               <span>Akses Pendidik & Tenaga Kependidikan</span>
             </div>
             <h2 class="text-xl sm:text-2xl font-bold tracking-tight" id="lblGuruNama">Budi Santoso, S.Pd.</h2>
-            <p class="text-xs text-purple-100 font-mono mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-1">
+            <div class="text-xs text-purple-100 font-mono mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-1">
               <span>NIP: <b id="lblGuruNip">198002152005011002</b></span>
               <span>&bull;</span>
               <span>Jabatan: <b id="lblGuruJabatan" class="font-sans">Wali Kelas 8-A</b></span>
+            </div>
+            <div class="text-xs text-purple-200 mt-1 flex flex-wrap items-center gap-x-3 gap-y-1">
+              <span>Wali Kelas (Rombel): <b id="lblGuruKelasWali" class="text-amber-300 font-semibold">Kelas 8-A</b> (Berdasarkan Kelas)</span>
               <span>&bull;</span>
-              <span>Binaan: <b id="lblGuruBinaan" class="font-sans">8-A</b></span>
-            </p>
+              <span>Guru Wali: <b id="lblGuruJmlBinaan" class="text-emerald-300 font-semibold">0 Siswa Binaan</b> (Bisa Beda Kelas)</span>
+            </div>
             <p class="text-xs text-purple-200 mt-1.5 flex items-center gap-1.5">
               <i data-lucide="phone" class="w-3.5 h-3.5 text-purple-300"></i>
               <span>Kontak HP / WA: <b id="lblGuruHp" class="font-mono text-white tracking-wider">-</b></span>
@@ -404,13 +410,95 @@
         <div class="flex items-center gap-2 self-stretch md:self-auto justify-end">
           <button onclick="bukaModalEditProfilGuru()" class="bg-white/20 hover:bg-white/30 active:scale-95 text-white text-xs font-semibold px-3.5 py-2 rounded-xl border border-white/30 transition flex items-center gap-1.5 shadow-sm">
             <i data-lucide="user-cog" class="w-3.5 h-3.5"></i>
-            <span>Edit Profil & Binaan</span>
+            <span>Edit Profil & Tugas</span>
           </button>
           <button onclick="logoutCurrentUser()" class="bg-white/10 hover:bg-white/20 text-white text-xs font-semibold px-3 py-2 rounded-xl border border-white/20 transition flex items-center gap-1.5">
             <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
             <span>Ganti Akun Guru</span>
           </button>
         </div>
+      </div>
+
+      <!-- PANEL MANAJEMEN SISWA BINAAN GURU -->
+      <div class="bg-white rounded-3xl border border-slate-200/90 shadow-sm p-5 sm:p-6 space-y-4">
+        
+        <!-- Header & Nav Tabs Binaan -->
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-slate-100 pb-3">
+          <div class="flex items-center space-x-2">
+            <button type="button" onclick="switchTabBinaanGuru('guruwali')" id="tabBtnBinaanGuruWali" class="px-3.5 py-2 rounded-xl text-xs font-bold bg-purple-600 text-white shadow-xs transition flex items-center gap-1.5">
+              <i data-lucide="users" class="w-4 h-4"></i>
+              <span>Siswa Binaan Guru Wali</span>
+              <span id="badgeCountSiswaBinaan" class="bg-white/20 text-white text-[10px] px-1.5 py-0.5 rounded-full font-mono">0</span>
+            </button>
+            <button type="button" onclick="switchTabBinaanGuru('walikelas')" id="tabBtnBinaanWaliKelas" class="px-3.5 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition flex items-center gap-1.5">
+              <i data-lucide="school" class="w-4 h-4"></i>
+              <span>Siswa Kelas (Rombel)</span>
+              <span id="badgeCountSiswaKelas" class="bg-slate-200 text-slate-700 text-[10px] px-1.5 py-0.5 rounded-full font-mono">0</span>
+            </button>
+          </div>
+
+          <div id="actionContainerBinaan">
+            <button type="button" onclick="bukaModalPilihSiswaBinaan()" class="bg-purple-50 text-purple-700 hover:bg-purple-100 border border-purple-200 active:scale-95 text-xs font-bold px-3.5 py-2 rounded-xl transition flex items-center gap-1.5 shadow-2xs">
+              <i data-lucide="user-plus" class="w-3.5 h-3.5"></i>
+              <span>+ Tambah Siswa Binaan (Bisa Beda Kelas)</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- TAB 1: SISWA BINAAN GURU WALI (BISA BEDA KELAS) -->
+        <div id="tabContentBinaanGuruWali" class="space-y-3">
+          <div class="flex items-center justify-between text-xs text-slate-500">
+            <p>Daftar siswa bimbingan personal Anda yang dapat berasal dari berbagai kelas berbeda.</p>
+            <span class="text-[11px] text-purple-600 font-semibold hidden sm:inline">Pembinaan Karakter & Akademik Personal</span>
+          </div>
+
+          <div class="overflow-x-auto rounded-2xl border border-slate-200/80">
+            <table class="w-full text-left text-xs text-slate-600">
+              <thead class="bg-slate-50 text-slate-700 font-semibold border-b border-slate-200">
+                <tr>
+                  <th class="py-3 px-3 text-center w-10">No</th>
+                  <th class="py-3 px-3 font-mono">NISN</th>
+                  <th class="py-3 px-4">Nama Siswa</th>
+                  <th class="py-3 px-3 text-center">Kelas Asal</th>
+                  <th class="py-3 px-3 text-center">L/P</th>
+                  <th class="py-3 px-4">Wali Kelas Rombel</th>
+                  <th class="py-3 px-4">Kontak Orang Tua</th>
+                  <th class="py-3 px-3 text-center">Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="tableGuruSiswaBinaan" class="divide-y divide-slate-100">
+                <tr><td colspan="8" class="text-center py-6 text-slate-400">Belum ada siswa binaan. Klik tombol '+ Tambah Siswa Binaan' di atas.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- TAB 2: SISWA KELAS (ROMBEL WALI KELAS) -->
+        <div id="tabContentBinaanWaliKelas" class="hidden space-y-3">
+          <div class="flex items-center justify-between text-xs text-slate-500">
+            <p id="descSiswaKelasRombel">Daftar seluruh siswa dalam rombel kelas yang Anda ampu sebagai Wali Kelas.</p>
+            <span class="text-[11px] text-amber-600 font-semibold hidden sm:inline">Wali Kelas Berdasarkan Rombel</span>
+          </div>
+
+          <div class="overflow-x-auto rounded-2xl border border-slate-200/80">
+            <table class="w-full text-left text-xs text-slate-600">
+              <thead class="bg-slate-50 text-slate-700 font-semibold border-b border-slate-200">
+                <tr>
+                  <th class="py-3 px-3 text-center w-10">No</th>
+                  <th class="py-3 px-3 font-mono">NISN</th>
+                  <th class="py-3 px-4">Nama Lengkap Siswa</th>
+                  <th class="py-3 px-3 text-center">L/P</th>
+                  <th class="py-3 px-4">Guru Wali Personal</th>
+                  <th class="py-3 px-4">Kontak Orang Tua</th>
+                </tr>
+              </thead>
+              <tbody id="tableGuruSiswaKelas" class="divide-y divide-slate-100">
+                <tr><td colspan="6" class="text-center py-6 text-slate-400">Tidak ada data siswa untuk kelas ini.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
       </div>
 
       <!-- 4 Teacher Applications -->
@@ -1077,13 +1165,15 @@
 
         <div>
           <label class="block text-xs font-semibold text-slate-700 mb-1">Jabatan / Tugas Utama:</label>
-          <input type="text" id="inputEditGuruJabatan" placeholder="Contoh: Wali Kelas 8-A / Guru BK / Pembina Ekskul" class="w-full text-xs px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-purple-500">
+          <input type="text" id="inputEditGuruJabatan" placeholder="Contoh: Guru Matematika / Guru BK / Pembina OSIS" class="w-full text-xs px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-purple-500">
         </div>
 
         <div>
-          <label class="block text-xs font-semibold text-slate-700 mb-1">Kelas / Bidang Binaan:</label>
-          <input type="text" id="inputEditGuruBinaan" placeholder="Contoh: 8-A / Futsal & Pramuka / Semua Kelas" class="w-full text-xs px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-purple-500">
-          <p class="text-[11px] text-slate-400 mt-1">Kelas atau rombel siswa yang Anda bimbing secara langsung.</p>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Wali Kelas Rombel (Berdasarkan Kelas):</label>
+          <select id="selectEditGuruKelasWali" class="w-full text-xs px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-purple-500">
+            <option value="-">- Bukan Wali Kelas Rombel -</option>
+          </select>
+          <p class="text-[11px] text-slate-400 mt-1">Pilih rombel jika Anda ditugaskan sebagai wali kelas suatu rombongan belajar.</p>
         </div>
 
         <div>
@@ -1100,6 +1190,64 @@
             <span>Simpan Perubahan</span>
           </button>
         </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ==================== MODAL PILIH SISWA BINAAN GURU WALI (BISA BEDA KELAS) ==================== -->
+  <div id="modalPilihSiswaBinaan" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-2xl w-full p-6 shadow-2xl relative animate-in fade-in zoom-in duration-150 max-h-[90vh] flex flex-col">
+      
+      <button onclick="tutupModalPilihSiswaBinaan()" class="absolute top-5 right-5 text-slate-400 hover:text-slate-600 p-1 rounded-lg">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+
+      <div class="flex items-center space-x-3 mb-4 flex-shrink-0">
+        <div class="w-10 h-10 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center flex-shrink-0">
+          <i data-lucide="user-plus" class="w-5 h-5"></i>
+        </div>
+        <div>
+          <h3 class="font-bold text-slate-900 text-base">Pilih Siswa Binaan (Bisa Beda Kelas)</h3>
+          <p class="text-xs text-slate-500">Pilih siswa dari kelas manapun untuk menjadi anak binaan guru wali Anda</p>
+        </div>
+      </div>
+
+      <!-- Filter & Pencarian Siswa -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 mb-3 flex-shrink-0">
+        <div>
+          <select id="filterPilihSiswaKelas" onchange="renderDaftarPilihSiswaBinaan()" class="w-full text-xs px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-purple-500">
+            <option value="">Semua Kelas</option>
+          </select>
+        </div>
+        <div class="sm:col-span-2">
+          <input type="text" id="searchPilihSiswa" oninput="renderDaftarPilihSiswaBinaan()" placeholder="Cari nama atau 10 digit NISN siswa..." class="w-full text-xs px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-purple-500">
+        </div>
+      </div>
+
+      <!-- Tabel Siswa Tersedia -->
+      <div class="overflow-y-auto flex-grow border border-slate-200 rounded-2xl">
+        <table class="w-full text-left text-xs text-slate-600">
+          <thead class="bg-slate-50 text-slate-700 font-semibold sticky top-0 border-b border-slate-200">
+            <tr>
+              <th class="py-2.5 px-3 font-mono">NISN</th>
+              <th class="py-2.5 px-3">Nama Siswa</th>
+              <th class="py-2.5 px-2 text-center">Kelas</th>
+              <th class="py-2.5 px-3">Guru Wali Saat Ini</th>
+              <th class="py-2.5 px-3 text-center">Tindakan</th>
+            </tr>
+          </thead>
+          <tbody id="tablePilihSiswaBinaan" class="divide-y divide-slate-100">
+            <tr><td colspan="5" class="text-center py-6 text-slate-400">Memuat data siswa...</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="pt-3 flex items-center justify-between flex-shrink-0">
+        <span class="text-xs text-slate-500" id="infoPilihSiswaBinaan">-</span>
+        <button type="button" onclick="tutupModalPilihSiswaBinaan()" class="bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold px-4 py-2 rounded-xl transition">
+          Selesai
+        </button>
       </div>
 
     </div>
@@ -1216,6 +1364,8 @@
         document.getElementById('lblSiswaKelas').innerText = currentUser.kelas || '-';
         document.getElementById('lblSiswaNisn').innerText = currentUser.nisn || '-';
         document.getElementById('lblSiswaWali').innerText = currentUser.wali || '-';
+        const elSiswaGuruWali = document.getElementById('lblSiswaGuruWali');
+        if (elSiswaGuruWali) elSiswaGuruWali.innerText = currentUser.guruWali || '-';
         const elHpOrtu = document.getElementById('lblSiswaHpOrtu');
         if (elHpOrtu) elHpOrtu.innerText = currentUser.hp || 'Belum diisi';
       } else if (role === 'guru') {
@@ -1229,9 +1379,22 @@
         document.getElementById('lblGuruNama').innerText = currentUser.nama || '-';
         document.getElementById('lblGuruNip').innerText = currentUser.nip || '-';
         document.getElementById('lblGuruJabatan').innerText = currentUser.jabatan || '-';
-        document.getElementById('lblGuruBinaan').innerText = currentUser.binaan || currentUser.kelas || '-';
+
+        const elGuruKelasWali = document.getElementById('lblGuruKelasWali');
+        if (elGuruKelasWali) {
+          elGuruKelasWali.innerText = (currentUser.kelas && currentUser.kelas !== '-') ? `Kelas ${currentUser.kelas}` : 'Bukan Wali Kelas';
+        }
+
+        const jmlBinaan = (currentUser.siswaBinaan && Array.isArray(currentUser.siswaBinaan)) ? currentUser.siswaBinaan.length : 0;
+        const elGuruJmlBinaan = document.getElementById('lblGuruJmlBinaan');
+        if (elGuruJmlBinaan) {
+          elGuruJmlBinaan.innerText = `${jmlBinaan} Siswa Binaan`;
+        }
+
         const elGuruHp = document.getElementById('lblGuruHp');
         if (elGuruHp) elGuruHp.innerText = currentUser.hp || 'Belum diisi';
+
+        renderGuruBinaanTables();
       } else if (role === 'admin') {
         document.getElementById('view-admin').classList.remove('hidden');
         userPill.classList.remove('hidden');
@@ -1315,7 +1478,8 @@
         nisn: cNisn,
         nama: match.nama,
         kelas: match.kelas,
-        wali: match.wali,
+        wali: match.wali || '-',
+        guruWali: match.guruWali || '-',
         hp: match.hp || ''
       });
       tutupModalPilihPeran();
@@ -1352,13 +1516,20 @@
         return;
       }
 
+      let binaanArr = [];
+      if (Array.isArray(match.siswaBinaan)) {
+        binaanArr = match.siswaBinaan.map(n => formatNisn(n)).filter(Boolean);
+      } else if (typeof match.siswaBinaan === 'string' && match.siswaBinaan.trim()) {
+        binaanArr = match.siswaBinaan.split(',').map(n => formatNisn(n)).filter(Boolean);
+      }
+
       simpanSesiPengguna('guru', {
         nip: match.nip,
         nama: match.nama,
         jabatan: match.jabatan,
-        binaan: match.kelas || match.binaan || '-',
         kelas: match.kelas || '-',
-        hp: match.hp || ''
+        hp: match.hp || '',
+        siswaBinaan: binaanArr
       });
       tutupModalPilihPeran();
       document.getElementById('inputLoginNip').value = '';
@@ -1427,8 +1598,20 @@
       document.getElementById('editGuruNamaBadge').innerText = currentUser.nama || '-';
       document.getElementById('editGuruNipBadge').innerText = currentUser.nip || '-';
       document.getElementById('inputEditGuruJabatan').value = currentUser.jabatan || '';
-      document.getElementById('inputEditGuruBinaan').value = currentUser.binaan || currentUser.kelas || '';
       document.getElementById('inputEditGuruHp').value = currentUser.hp || '';
+
+      const selKelas = document.getElementById('selectEditGuruKelasWali');
+      if (selKelas) {
+        selKelas.innerHTML = '<option value="-">- Bukan Wali Kelas Rombel -</option>';
+        (appData.daftarKelas || []).forEach(k => {
+          const opt = document.createElement('option');
+          opt.value = k;
+          opt.innerText = `Wali Kelas ${k}`;
+          if (currentUser.kelas === k) opt.selected = true;
+          selKelas.appendChild(opt);
+        });
+      }
+
       document.getElementById('modalEditProfilGuru').classList.remove('hidden');
       setTimeout(() => document.getElementById('inputEditGuruJabatan').focus(), 100);
     }
@@ -1440,7 +1623,7 @@
     async function simpanProfilGuru() {
       if (!currentUser || currentUser.role !== 'guru') return;
       const jabatan = document.getElementById('inputEditGuruJabatan').value.trim();
-      const kelasBinaan = document.getElementById('inputEditGuruBinaan').value.trim();
+      const kelasWali = document.getElementById('selectEditGuruKelasWali').value.trim();
       const noHp = document.getElementById('inputEditGuruHp').value.trim();
 
       if (!jabatan) {
@@ -1457,15 +1640,14 @@
 
       const res = await callPortalApi('updateProfilGuru', {
         nip: currentUser.nip,
-        kelasBinaan: kelasBinaan,
+        kelasWali: kelasWali,
         noHp: noHp,
         jabatan: jabatan
       });
 
       if (res && res.success) {
         currentUser.jabatan = jabatan;
-        currentUser.binaan = kelasBinaan;
-        currentUser.kelas = kelasBinaan;
+        currentUser.kelas = kelasWali;
         currentUser.hp = noHp;
         simpanSesiPengguna('guru', currentUser);
 
@@ -1473,20 +1655,323 @@
         const match = (appData.guruList || []).find(g => String(g.nip).trim().toLowerCase() === String(currentUser.nip).trim().toLowerCase());
         if (match) {
           match.jabatan = jabatan;
-          match.kelas = kelasBinaan;
+          match.kelas = kelasWali;
           match.hp = noHp;
         }
 
+        // Jika menjadi wali kelas rombel, sinkronkan nama wali di siswa kelas tersebut
+        if (kelasWali && kelasWali !== '-') {
+          (appData.siswaList || []).forEach(s => {
+            if (s.kelas === kelasWali) s.wali = currentUser.nama;
+          });
+        }
+
         document.getElementById('lblGuruJabatan').innerText = jabatan;
-        document.getElementById('lblGuruBinaan').innerText = kelasBinaan || '-';
+        const elGuruKelasWali = document.getElementById('lblGuruKelasWali');
+        if (elGuruKelasWali) {
+          elGuruKelasWali.innerText = (kelasWali !== '-') ? `Kelas ${kelasWali}` : 'Bukan Wali Kelas';
+        }
         const elGuruHp = document.getElementById('lblGuruHp');
         if (elGuruHp) elGuruHp.innerText = noHp || 'Belum diisi';
 
+        renderGuruBinaanTables();
         tutupModalEditProfilGuru();
-        Swal.fire('Berhasil Disimpan! 🟢', 'Profil dan binaan Anda berhasil diperbarui.', 'success');
+        Swal.fire('Berhasil Disimpan! 🟢', 'Profil guru dan rombel wali kelas berhasil diperbarui.', 'success');
       } else {
         Swal.fire('Gagal Menyimpan', (res && res.error) || 'Terjadi kesalahan saat menyimpan ke database.', 'error');
       }
+    }
+
+    // ==========================================
+    // MANAJEMEN SISWA BINAAN GURU (LINTAS KELAS)
+    // ==========================================
+    let currentTabBinaan = 'guruwali';
+
+    function switchTabBinaanGuru(tab) {
+      currentTabBinaan = tab;
+      const btnGuruWali = document.getElementById('tabBtnBinaanGuruWali');
+      const btnWaliKelas = document.getElementById('tabBtnBinaanWaliKelas');
+      const contentGuruWali = document.getElementById('tabContentBinaanGuruWali');
+      const contentWaliKelas = document.getElementById('tabContentBinaanWaliKelas');
+      const actionContainer = document.getElementById('actionContainerBinaan');
+
+      if (tab === 'guruwali') {
+        btnGuruWali.className = 'px-3.5 py-2 rounded-xl text-xs font-bold bg-purple-600 text-white shadow-xs transition flex items-center gap-1.5';
+        btnWaliKelas.className = 'px-3.5 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition flex items-center gap-1.5';
+        contentGuruWali.classList.remove('hidden');
+        contentWaliKelas.classList.add('hidden');
+        if (actionContainer) actionContainer.classList.remove('hidden');
+      } else {
+        btnWaliKelas.className = 'px-3.5 py-2 rounded-xl text-xs font-bold bg-purple-600 text-white shadow-xs transition flex items-center gap-1.5';
+        btnGuruWali.className = 'px-3.5 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition flex items-center gap-1.5';
+        contentWaliKelas.classList.remove('hidden');
+        contentGuruWali.classList.add('hidden');
+        if (actionContainer) actionContainer.classList.add('hidden');
+      }
+      lucide.createIcons();
+    }
+
+    function renderGuruBinaanTables() {
+      if (!currentUser || currentUser.role !== 'guru') return;
+
+      const binaanNisnList = Array.isArray(currentUser.siswaBinaan) ? currentUser.siswaBinaan.map(n => formatNisn(n)) : [];
+
+      // 1. Render Siswa Binaan Guru Wali
+      const badgeCountBinaan = document.getElementById('badgeCountSiswaBinaan');
+      if (badgeCountBinaan) badgeCountBinaan.innerText = binaanNisnList.length;
+
+      const tbodyBinaan = document.getElementById('tableGuruSiswaBinaan');
+      if (tbodyBinaan) {
+        const binaanStudents = (appData.siswaList || []).filter(s => binaanNisnList.includes(formatNisn(s.nisn)));
+        if (binaanStudents.length === 0) {
+          tbodyBinaan.innerHTML = `<tr><td colspan="8" class="text-center py-6 text-slate-400">Belum ada siswa binaan. Klik tombol '+ Tambah Siswa Binaan' di atas.</td></tr>`;
+        } else {
+          tbodyBinaan.innerHTML = binaanStudents.map((s, idx) => {
+            const cNisn = formatNisn(s.nisn);
+            return `
+              <tr class="hover:bg-purple-50/40 transition">
+                <td class="py-3 px-3 text-center font-bold text-slate-500">${idx + 1}</td>
+                <td class="py-3 px-3 font-mono font-semibold text-slate-900">${cNisn}</td>
+                <td class="py-3 px-4 font-bold text-slate-900">${s.nama}</td>
+                <td class="py-3 px-3 text-center"><span class="px-2 py-0.5 rounded-full bg-slate-100 text-slate-700 font-semibold">${s.kelas}</span></td>
+                <td class="py-3 px-3 text-center">${s.jk || '-'}</td>
+                <td class="py-3 px-4 text-slate-700">${s.wali || '-'}</td>
+                <td class="py-3 px-4 font-mono text-[11px] text-slate-600">${s.hp || '-'}</td>
+                <td class="py-3 px-3 text-center">
+                  <button type="button" onclick="hapusBinaanDariGuru('${cNisn}', '${s.nama.replace(/'/g, "\\'")}')" class="text-[11px] font-semibold px-2.5 py-1 text-rose-600 hover:bg-rose-50 border border-rose-200 rounded-lg transition" title="Lepaskan siswa dari binaan">
+                    Lepas
+                  </button>
+                </td>
+              </tr>
+            `;
+          }).join('');
+        }
+      }
+
+      // 2. Render Siswa Kelas (Rombel Wali Kelas)
+      const tbodyKelas = document.getElementById('tableGuruSiswaKelas');
+      const badgeCountKelas = document.getElementById('badgeCountSiswaKelas');
+      const descSiswaKelasRombel = document.getElementById('descSiswaKelasRombel');
+
+      if (tbodyKelas) {
+        if (!currentUser.kelas || currentUser.kelas === '-') {
+          if (badgeCountKelas) badgeCountKelas.innerText = '0';
+          if (descSiswaKelasRombel) descSiswaKelasRombel.innerText = 'Anda belum ditugaskan sebagai Wali Kelas untuk rombongan belajar tertentu.';
+          tbodyKelas.innerHTML = `<tr><td colspan="6" class="text-center py-6 text-slate-400">Anda bukan Wali Kelas suatu rombel. Silakan atur kelas di "Edit Profil & Tugas".</td></tr>`;
+        } else {
+          const kelasStudents = (appData.siswaList || []).filter(s => s.kelas === currentUser.kelas);
+          if (badgeCountKelas) badgeCountKelas.innerText = kelasStudents.length;
+          if (descSiswaKelasRombel) descSiswaKelasRombel.innerText = `Daftar seluruh siswa dalam rombel Kelas ${currentUser.kelas} yang Anda ampu sebagai Wali Kelas.`;
+
+          if (kelasStudents.length === 0) {
+            tbodyKelas.innerHTML = `<tr><td colspan="6" class="text-center py-6 text-slate-400">Belum ada data siswa yang terdaftar di kelas ${currentUser.kelas}.</td></tr>`;
+          } else {
+            tbodyKelas.innerHTML = kelasStudents.map((s, idx) => {
+              const cNisn = formatNisn(s.nisn);
+              return `
+                <tr class="hover:bg-slate-50 transition">
+                  <td class="py-3 px-3 text-center font-bold text-slate-500">${idx + 1}</td>
+                  <td class="py-3 px-3 font-mono font-semibold text-slate-900">${cNisn}</td>
+                  <td class="py-3 px-4 font-bold text-slate-900">${s.nama}</td>
+                  <td class="py-3 px-3 text-center">${s.jk || '-'}</td>
+                  <td class="py-3 px-4 text-purple-700 font-medium">${s.guruWali || '-'}</td>
+                  <td class="py-3 px-4 font-mono text-[11px] text-slate-600">${s.hp || '-'}</td>
+                </tr>
+              `;
+            }).join('');
+          }
+        }
+      }
+
+      lucide.createIcons();
+    }
+
+    function bukaModalPilihSiswaBinaan() {
+      if (!currentUser || currentUser.role !== 'guru') return;
+
+      const selKelas = document.getElementById('filterPilihSiswaKelas');
+      if (selKelas) {
+        selKelas.innerHTML = '<option value="">Semua Kelas</option>';
+        (appData.daftarKelas || []).forEach(k => {
+          const opt = document.createElement('option');
+          opt.value = k;
+          opt.innerText = `Kelas ${k}`;
+          selKelas.appendChild(opt);
+        });
+      }
+
+      document.getElementById('searchPilihSiswa').value = '';
+      renderDaftarPilihSiswaBinaan();
+      document.getElementById('modalPilihSiswaBinaan').classList.remove('hidden');
+    }
+
+    function tutupModalPilihSiswaBinaan() {
+      document.getElementById('modalPilihSiswaBinaan').classList.add('hidden');
+    }
+
+    function renderDaftarPilihSiswaBinaan() {
+      if (!currentUser || currentUser.role !== 'guru') return;
+      const filterKelas = (document.getElementById('filterPilihSiswaKelas').value || '').trim();
+      const searchRaw = (document.getElementById('searchPilihSiswa').value || '').toLowerCase().trim();
+      const searchNisn = formatNisn(searchRaw);
+
+      const binaanNisnList = Array.isArray(currentUser.siswaBinaan) ? currentUser.siswaBinaan.map(n => formatNisn(n)) : [];
+
+      const filtered = (appData.siswaList || []).filter(s => {
+        const sNisn = formatNisn(s.nisn);
+        const matchSearch = !searchRaw || s.nama.toLowerCase().includes(searchRaw) || sNisn.includes(searchRaw) || (searchNisn && sNisn === searchNisn);
+        const matchKelas = !filterKelas || s.kelas === filterKelas;
+        return matchSearch && matchKelas;
+      });
+
+      const tbody = document.getElementById('tablePilihSiswaBinaan');
+      document.getElementById('infoPilihSiswaBinaan').innerText = `Menampilkan ${filtered.length} siswa • ${binaanNisnList.length} sudah dibina`;
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" class="text-center py-6 text-slate-400">Tidak ada siswa yang sesuai filter pencarian.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = filtered.map(s => {
+        const cNisn = formatNisn(s.nisn);
+        const isBinaan = binaanNisnList.includes(cNisn);
+
+        let actionBtn = '';
+        if (isBinaan) {
+          actionBtn = `
+            <span class="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-lg">
+              <i data-lucide="check" class="w-3 h-3"></i> Sudah Dibina
+            </span>
+          `;
+        } else {
+          actionBtn = `
+            <button type="button" onclick="tambahBinaanKeGuru('${cNisn}')" class="bg-purple-600 hover:bg-purple-700 text-white text-[11px] font-bold px-3 py-1 rounded-lg transition shadow-2xs flex items-center gap-1 mx-auto">
+              <i data-lucide="plus" class="w-3 h-3"></i> + Jadikan Binaan
+            </button>
+          `;
+        }
+
+        return `
+          <tr class="hover:bg-slate-50 transition">
+            <td class="py-2.5 px-3 font-mono font-semibold text-slate-900">${cNisn}</td>
+            <td class="py-2.5 px-3 font-bold text-slate-900">${s.nama}</td>
+            <td class="py-2.5 px-2 text-center font-semibold text-slate-700">${s.kelas}</td>
+            <td class="py-2.5 px-3 text-slate-600 text-[11px]">${s.guruWali || '-'}</td>
+            <td class="py-2.5 px-3 text-center">${actionBtn}</td>
+          </tr>
+        `;
+      }).join('');
+
+      lucide.createIcons();
+    }
+
+    async function tambahBinaanKeGuru(nisn) {
+      if (!currentUser || currentUser.role !== 'guru') return;
+      const cNisn = formatNisn(nisn);
+
+      Swal.fire({
+        title: 'Menambahkan...',
+        text: 'Menghubungkan siswa sebagai binaan personal...',
+        allowOutsideClick: false,
+        didOpen: () => Swal.showLoading()
+      });
+
+      const res = await callPortalApi('tambahSiswaBinaan', {
+        nip: currentUser.nip,
+        nisn: cNisn
+      });
+
+      if (res && res.success) {
+        if (!Array.isArray(currentUser.siswaBinaan)) currentUser.siswaBinaan = [];
+        if (!currentUser.siswaBinaan.includes(cNisn)) {
+          currentUser.siswaBinaan.push(cNisn);
+        }
+        simpanSesiPengguna('guru', currentUser);
+
+        // Update di appData master
+        const sMatch = (appData.siswaList || []).find(s => formatNisn(s.nisn) === cNisn);
+        if (sMatch) sMatch.guruWali = currentUser.nama;
+
+        const gMatch = (appData.guruList || []).find(g => String(g.nip).trim().toLowerCase() === String(currentUser.nip).trim().toLowerCase());
+        if (gMatch) {
+          if (!Array.isArray(gMatch.siswaBinaan)) gMatch.siswaBinaan = [];
+          if (!gMatch.siswaBinaan.includes(cNisn)) gMatch.siswaBinaan.push(cNisn);
+        }
+
+        renderGuruBinaanTables();
+        renderDaftarPilihSiswaBinaan();
+
+        Swal.fire({
+          toast: true,
+          position: 'top-end',
+          icon: 'success',
+          title: 'Siswa berhasil ditambahkan ke binaan',
+          showConfirmButton: false,
+          timer: 1500
+        });
+      } else {
+        Swal.fire('Gagal Menambahkan', (res && res.error) || 'Terjadi kesalahan sistem', 'error');
+      }
+    }
+
+    async function hapusBinaanDariGuru(nisn, namaSiswa) {
+      if (!currentUser || currentUser.role !== 'guru') return;
+      const cNisn = formatNisn(nisn);
+
+      Swal.fire({
+        title: 'Lepaskan Siswa Binaan?',
+        html: `Apakah Anda yakin ingin melepaskan <b>${namaSiswa || cNisn}</b> dari daftar siswa binaan Anda?`,
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Ya, Lepaskan',
+        confirmButtonColor: '#e11d48',
+        cancelButtonText: 'Batal'
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          Swal.fire({
+            title: 'Memproses...',
+            allowOutsideClick: false,
+            didOpen: () => Swal.showLoading()
+          });
+
+          const res = await callPortalApi('hapusSiswaBinaan', {
+            nip: currentUser.nip,
+            nisn: cNisn
+          });
+
+          if (res && res.success) {
+            if (Array.isArray(currentUser.siswaBinaan)) {
+              currentUser.siswaBinaan = currentUser.siswaBinaan.filter(n => formatNisn(n) !== cNisn);
+            }
+            simpanSesiPengguna('guru', currentUser);
+
+            // Update di appData master
+            const sMatch = (appData.siswaList || []).find(s => formatNisn(s.nisn) === cNisn);
+            if (sMatch) sMatch.guruWali = '-';
+
+            const gMatch = (appData.guruList || []).find(g => String(g.nip).trim().toLowerCase() === String(currentUser.nip).trim().toLowerCase());
+            if (gMatch && Array.isArray(gMatch.siswaBinaan)) {
+              gMatch.siswaBinaan = gMatch.siswaBinaan.filter(n => formatNisn(n) !== cNisn);
+            }
+
+            renderGuruBinaanTables();
+            if (!document.getElementById('modalPilihSiswaBinaan').classList.contains('hidden')) {
+              renderDaftarPilihSiswaBinaan();
+            }
+
+            Swal.fire({
+              toast: true,
+              position: 'top-end',
+              icon: 'success',
+              title: 'Siswa dilepaskan dari binaan',
+              showConfirmButton: false,
+              timer: 1500
+            });
+          } else {
+            Swal.fire('Gagal', (res && res.error) || 'Gagal melepaskan binaan', 'error');
+          }
+        }
+      });
     }
 
     // ==========================================
@@ -1494,7 +1979,7 @@
     // ==========================================
     // 💡 TIPS: Anda dapat menempelkan URL Web App Google Apps Script (/exec) langsung di sini
     // agar SEMUA pengunjung website Vercel otomatis tersambung ke Google Sheets yang sama!
-    const DEFAULT_PORTAL_API_URL = "https://script.google.com/macros/s/AKfycbxP7cowfWQk8T66mshLrBEPxh2gLL2ugjQPqxI_n6KSgmEWirvvz9BZCPne_0kPeqPUjQ/exec";
+    const DEFAULT_PORTAL_API_URL = "https://script.google.com/macros/s/AKfycbzd7eAJzh6KeurxcUxDokI_bexNjLqjrtZsTWnyYWLJ3YFWWq-r6H2GPWrm6QgmGFce0w/exec";
 
     function getPortalApiUrl() {
       const urlParam = new URLSearchParams(window.location.search).get('api');
@@ -1533,7 +2018,9 @@
           else if (action === 'simpanSiswaBaru') runner.simpanSiswaBaru(payload.siswa, payload.pin);
           else if (action === 'simpanGuruBaru') runner.simpanGuruBaru(payload.guru, payload.pin);
           else if (action === 'updateProfilSiswa') runner.updateProfilSiswa(payload.nisn, payload.noHpOrtu);
-          else if (action === 'updateProfilGuru') runner.updateProfilGuru(payload.nip, payload.kelasBinaan, payload.noHp, payload.jabatan);
+          else if (action === 'updateProfilGuru') runner.updateProfilGuru(payload.nip, payload.kelasWali || payload.kelasBinaan, payload.noHp, payload.jabatan, payload.siswaBinaan);
+          else if (action === 'tambahSiswaBinaan') runner.tambahSiswaBinaan(payload.nip, payload.nisn);
+          else if (action === 'hapusSiswaBinaan') runner.hapusSiswaBinaan(payload.nip, payload.nisn);
           else if (action === 'syncDataKeSemuaAplikasi') runner.syncDataKeSemuaAplikasi(payload.pin);
           else resolve({ success: false, error: 'Aksi tidak dikenal: ' + action });
         });
@@ -1553,8 +2040,19 @@
               redirect: 'follow'
             });
           } else {
-            // Gunakan POST request untuk simpan data
-            resp = await fetch(apiUrl, {
+            // Gunakan POST request dengan parameter query di URL juga
+            // Ini mencegah kehilangan payload 'action' saat Google Apps Script melakukan 302 redirect downgrade!
+            const qParams = new URLSearchParams();
+            qParams.append('action', action);
+            for (const key in payload) {
+              if (typeof payload[key] === 'string' || typeof payload[key] === 'number') {
+                qParams.append(key, String(payload[key]));
+              }
+            }
+            const separator = apiUrl.includes('?') ? '&' : '?';
+            const postUrl = `${apiUrl}${separator}${qParams.toString()}`;
+
+            resp = await fetch(postUrl, {
               method: 'POST',
               headers: { 'Content-Type': 'text/plain;charset=utf-8' },
               body: JSON.stringify({ action, ...payload }),
@@ -1600,10 +2098,35 @@
         const match = (appData.guruList || []).find(g => String(g.nip).trim().toLowerCase() === String(payload.nip).trim().toLowerCase());
         if (match) {
           match.jabatan = payload.jabatan;
-          match.kelas = payload.kelasBinaan;
+          match.kelas = payload.kelasWali || payload.kelasBinaan;
           match.hp = payload.noHp;
         }
         return { success: true, message: 'Profil Guru berhasil diperbarui (Demo mode)' };
+      } else if (action === 'tambahSiswaBinaan') {
+        const cNip = String(payload.nip).trim().toLowerCase();
+        const cNisn = formatNisn(payload.nisn);
+        const guru = (appData.guruList || []).find(g => String(g.nip).trim().toLowerCase() === cNip);
+        if (guru) {
+          if (!guru.siswaBinaan) guru.siswaBinaan = [];
+          if (!guru.siswaBinaan.includes(cNisn)) guru.siswaBinaan.push(cNisn);
+        }
+        const siswa = (appData.siswaList || []).find(s => formatNisn(s.nisn) === cNisn);
+        if (siswa && guru) {
+          siswa.guruWali = guru.nama;
+        }
+        return { success: true, message: 'Siswa berhasil ditambahkan ke binaan guru wali' };
+      } else if (action === 'hapusSiswaBinaan') {
+        const cNip = String(payload.nip).trim().toLowerCase();
+        const cNisn = formatNisn(payload.nisn);
+        const guru = (appData.guruList || []).find(g => String(g.nip).trim().toLowerCase() === cNip);
+        if (guru && guru.siswaBinaan) {
+          guru.siswaBinaan = guru.siswaBinaan.filter(n => formatNisn(n) !== cNisn);
+        }
+        const siswa = (appData.siswaList || []).find(s => formatNisn(s.nisn) === cNisn);
+        if (siswa) {
+          siswa.guruWali = '-';
+        }
+        return { success: true, message: 'Siswa berhasil dilepaskan dari binaan guru wali' };
       } else if (action === 'syncDataKeSemuaAplikasi') {
         return { success: true, message: 'Sinkronisasi demo berhasil dijalankan' };
       }
@@ -2322,20 +2845,20 @@
         },
         daftarKelas: ['7-A', '8-A', '8-B', '9-A'],
         guruList: [
-          { nip: '197501012000031001', nama: 'Drs. Hartono, M.Pd.', jabatan: 'Kepala Sekolah', role: 'Kepsek', kelas: '-', hp: '081234500001', status: 'Aktif' },
-          { nip: '198002152005011002', nama: 'Budi Santoso, S.Pd.', jabatan: 'Wali Kelas 8-A', role: 'Guru / Wali', kelas: '8-A', hp: '081234500002', status: 'Aktif' },
-          { nip: '198506202008012003', nama: 'Dewi Lestari, S.Pd.', jabatan: 'Wali Kelas 8-B', role: 'Guru / Wali', kelas: '8-B', hp: '081234500003', status: 'Aktif' },
-          { nip: '199008142015022006', nama: 'Rina Anggraini, S.Pd.', jabatan: 'Guru Bimbingan Konseling (BK)', role: 'Guru BK', kelas: 'Semua', hp: '081234500006', status: 'Aktif' }
+          { nip: '197501012000031001', nama: 'Drs. Hartono, M.Pd.', jabatan: 'Kepala Sekolah', role: 'Kepsek', kelas: '-', hp: '081234500001', status: 'Aktif', siswaBinaan: [] },
+          { nip: '198002152005011002', nama: 'Budi Santoso, S.Pd.', jabatan: 'Wali Kelas 8-A', role: 'Guru / Wali', kelas: '8-A', hp: '081234500002', status: 'Aktif', siswaBinaan: ['0081234567', '0083456789'] },
+          { nip: '198506202008012003', nama: 'Dewi Lestari, S.Pd.', jabatan: 'Wali Kelas 8-B', role: 'Guru / Wali', kelas: '8-B', hp: '081234500003', status: 'Aktif', siswaBinaan: ['0082345678', '0084567890'] },
+          { nip: '199008142015022006', nama: 'Rina Anggraini, S.Pd.', jabatan: 'Guru Bimbingan Konseling (BK)', role: 'Guru BK', kelas: 'Semua', hp: '081234500006', status: 'Aktif', siswaBinaan: ['0085678901'] }
         ],
         siswaList: [
-          { nisn: '0081234567', nama: 'Ahmad Fauzan Pratama', kelas: '8-A', jk: 'L', wali: 'Budi Santoso, S.Pd.', hp: '081234567890', status: 'Aktif' },
-          { nisn: '0082345678', nama: 'Siti Aisyah Rahmawati', kelas: '8-A', jk: 'P', wali: 'Budi Santoso, S.Pd.', hp: '081234567891', status: 'Aktif' },
-          { nisn: '0083456789', nama: 'Muhammad Rizky Kurniawan', kelas: '8-B', jk: 'L', wali: 'Dewi Lestari, S.Pd.', hp: '081234567892', status: 'Aktif' },
-          { nisn: '0084567890', nama: 'Cantika Putri Maharani', kelas: '8-B', jk: 'P', wali: 'Dewi Lestari, S.Pd.', hp: '081234567893', status: 'Aktif' },
-          { nisn: '0085678901', nama: 'Dimas Arya Wicaksana', kelas: '9-A', jk: 'L', wali: 'Agus Setiawan, M.Pd.', hp: '081234567894', status: 'Aktif' },
-          { nisn: '0086789012', nama: 'Nabila Zahra Syahrani', kelas: '9-A', jk: 'P', wali: 'Agus Setiawan, M.Pd.', hp: '081234567895', status: 'Aktif' },
-          { nisn: '0087890123', nama: 'Fajar Hidayat', kelas: '7-A', jk: 'L', wali: 'Sri Wahyuni, S.Pd.', hp: '081234567896', status: 'Aktif' },
-          { nisn: '0088901234', nama: 'Anisa Rahma', kelas: '7-A', jk: 'P', wali: 'Sri Wahyuni, S.Pd.', hp: '081234567897', status: 'Aktif' }
+          { nisn: '0081234567', nama: 'Ahmad Fauzan Pratama', kelas: '8-A', jk: 'L', wali: 'Budi Santoso, S.Pd.', guruWali: 'Budi Santoso, S.Pd.', hp: '081234567890', status: 'Aktif' },
+          { nisn: '0082345678', nama: 'Siti Aisyah Rahmawati', kelas: '8-A', jk: 'P', wali: 'Budi Santoso, S.Pd.', guruWali: 'Dewi Lestari, S.Pd.', hp: '081234567891', status: 'Aktif' },
+          { nisn: '0083456789', nama: 'Muhammad Rizky Kurniawan', kelas: '8-B', jk: 'L', wali: 'Dewi Lestari, S.Pd.', guruWali: 'Budi Santoso, S.Pd.', hp: '081234567892', status: 'Aktif' },
+          { nisn: '0084567890', nama: 'Cantika Putri Maharani', kelas: '8-B', jk: 'P', wali: 'Dewi Lestari, S.Pd.', guruWali: 'Dewi Lestari, S.Pd.', hp: '081234567893', status: 'Aktif' },
+          { nisn: '0085678901', nama: 'Dimas Arya Wicaksana', kelas: '9-A', jk: 'L', wali: 'Agus Setiawan, M.Pd.', guruWali: 'Rina Anggraini, S.Pd.', hp: '081234567894', status: 'Aktif' },
+          { nisn: '0086789012', nama: 'Nabila Zahra Syahrani', kelas: '9-A', jk: 'P', wali: 'Agus Setiawan, M.Pd.', guruWali: '-', hp: '081234567895', status: 'Aktif' },
+          { nisn: '0087890123', nama: 'Fajar Hidayat', kelas: '7-A', jk: 'L', wali: 'Sri Wahyuni, S.Pd.', guruWali: '-', hp: '081234567896', status: 'Aktif' },
+          { nisn: '0088901234', nama: 'Anisa Rahma', kelas: '7-A', jk: 'P', wali: 'Sri Wahyuni, S.Pd.', guruWali: '-', hp: '081234567897', status: 'Aktif' }
         ]
       };
     }
