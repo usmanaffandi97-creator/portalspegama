@@ -1,0 +1,12 @@
+{
+  "name": "portal-sekolah-terpadu",
+  "version": "2.0.0",
+  "description": "Portal Sistem Informasi Sekolah Terpadu (PWA Mobile & Vercel Ready)",
+  "private": true,
+  "scripts": {
+    "start": "serve .",
+    "build": "echo 'Static build ready for Vercel'"
+  },
+  "keywords": ["pwa", "sekolah", "portal", "education", "vercel"],
+  "author": "Tim Pengembang Sekolah"
+}

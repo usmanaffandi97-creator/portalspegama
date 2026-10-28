@@ -1,0 +1,55 @@
+{
+  "name": "Portal Sistem Informasi Sekolah Terpadu",
+  "short_name": "PortalSekolah",
+  "description": "Portal satu pintu akses aplikasi nilai, presensi ekstrakurikuler, pembiasaan 7 karakter, dan buku kedisiplinan siswa.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f8fafc",
+  "theme_color": "#4f46e5",
+  "lang": "id",
+  "categories": ["education", "productivity"],
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Masuk Siswa",
+      "short_name": "Siswa",
+      "description": "Buka portal khusus siswa",
+      "url": "./?role=siswa",
+      "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Masuk Guru",
+      "short_name": "Guru",
+      "description": "Buka portal khusus pendidik",
+      "url": "./?role=guru",
+      "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }]
+    }
+  ]
+}

@@ -1,0 +1,1945 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Portal Sistem Informasi Sekolah Terpadu</title>
+
+  <!-- PWA & Mobile Web App Meta -->
+  <meta name="theme-color" content="#4f46e5">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="PortalSekolah">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+  <link rel="icon" type="image/svg+xml" href="icons/icon.svg">
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- SweetAlert2 -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background-color: #cbd5e1;
+      border-radius: 9999px;
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col antialiased selection:bg-indigo-500 selection:text-white">
+
+  <!-- TOP NAVBAR -->
+  <header class="bg-white border-b border-slate-200 sticky top-0 z-40 shadow-xs">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+        
+        <!-- Logo & School Identity -->
+        <div class="flex items-center space-x-3 cursor-pointer" onclick="navigateHome()">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-blue-500 flex items-center justify-center text-white shadow-md shadow-indigo-100 flex-shrink-0">
+            <i data-lucide="layout-grid" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h1 id="navSchoolName" class="font-bold text-base sm:text-lg text-slate-900 leading-tight">SMP NEGERI INDONESIA HEBAT</h1>
+            <p class="text-xs text-slate-500 font-medium">Portal Sistem Informasi Terpadu</p>
+          </div>
+        </div>
+
+        <!-- Role Badge & User Session Area -->
+        <div class="flex items-center space-x-2 sm:space-x-3">
+          
+          <!-- Tombol / Pill Pengguna Aktif -->
+          <div id="userProfilePill" class="hidden items-center gap-2 bg-slate-100 hover:bg-slate-200/80 px-3 py-1.5 rounded-xl text-xs transition cursor-pointer" onclick="bukaModalGantiPeran()">
+            <span id="userRoleIcon" class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            <div class="text-left">
+              <span id="userRoleTitle" class="font-bold text-slate-800 block text-[11px] leading-tight">Siswa: Ahmad</span>
+              <span id="userRoleSub" class="text-[10px] text-slate-500 block leading-tight">Kelas 8-A</span>
+            </div>
+            <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-slate-400"></i>
+          </div>
+
+          <!-- Tombol Pasang di HP Android / PWA -->
+          <button id="btnPwaInstallHeader" onclick="triggerPwaInstall()" title="Pasang Aplikasi di Layar Utama HP" class="hidden sm:inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-xl border border-indigo-200 text-indigo-700 bg-indigo-50/80 hover:bg-indigo-100 transition shadow-2xs">
+            <i data-lucide="smartphone" class="w-3.5 h-3.5"></i>
+            <span>Instal App</span>
+          </button>
+
+          <!-- Tombol Ganti Peran / Keluar jika sudah login -->
+          <button id="btnLogout" onclick="logoutCurrentUser()" title="Keluar / Ganti Peran" class="hidden items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-xl border border-rose-200 text-rose-600 hover:bg-rose-50 transition">
+            <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
+            <span class="hidden sm:inline">Keluar</span>
+          </button>
+
+          <!-- Tombol Masuk jika belum login -->
+          <button id="btnLoginHeader" onclick="bukaModalGantiPeran()" class="inline-flex items-center gap-1.5 text-xs font-bold px-3.5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm transition">
+            <i data-lucide="user-check" class="w-4 h-4"></i>
+            <span>Pilih Peran Masuk</span>
+          </button>
+
+          <!-- Refresh Data -->
+          <button onclick="refreshData(true)" title="Muat Ulang Data" class="p-2 text-slate-500 hover:text-slate-700 hover:bg-slate-100 rounded-xl transition">
+            <i data-lucide="refresh-cw" id="iconRefresh" class="w-4 h-4"></i>
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </header>
+
+  <!-- BANNER INSTALL PWA MOBILE (ANDROID / iOS) -->
+  <div id="pwaInstallBanner" class="hidden bg-gradient-to-r from-indigo-700 via-indigo-600 to-blue-600 text-white px-4 py-2.5 shadow-md sticky top-16 z-30 transition-all">
+    <div class="max-w-7xl mx-auto flex items-center justify-between gap-3">
+      <div class="flex items-center space-x-3">
+        <div class="w-8 h-8 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center flex-shrink-0">
+          <i data-lucide="smartphone" class="w-4 h-4"></i>
+        </div>
+        <div>
+          <p class="text-xs sm:text-sm font-bold leading-tight">Pasang di HP Android Anda</p>
+          <p class="text-[11px] text-indigo-100 leading-tight">Akses instan dari Layar Utama, layar penuh & lebih cepat!</p>
+        </div>
+      </div>
+      <div class="flex items-center space-x-2">
+        <button type="button" onclick="triggerPwaInstall()" class="bg-white text-indigo-700 hover:bg-indigo-50 font-bold text-xs px-3.5 py-1.5 rounded-xl shadow-xs transition flex items-center gap-1.5 flex-shrink-0">
+          <i data-lucide="download" class="w-3.5 h-3.5"></i>
+          <span>Pasang</span>
+        </button>
+        <button type="button" onclick="dismissPwaBanner()" class="text-white/80 hover:text-white p-1 rounded-lg">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- LOADING OVERLAY -->
+  <div id="loadingOverlay" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center transition-opacity">
+    <div class="bg-white px-6 py-5 rounded-2xl shadow-xl flex items-center space-x-3 text-slate-700">
+      <div class="w-6 h-6 border-3 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
+      <span class="font-medium text-sm">Menghubungkan ke Portal Sekolah Terpadu...</span>
+    </div>
+  </div>
+
+  <!-- MAIN CONTAINER -->
+  <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+
+    <!-- ========================================================================= -->
+    <!-- VIEW 0: PEMILIHAN PERAN (WELCOME / LANDING SCREEN JIKA BELUM MEMILIH ROLE) -->
+    <!-- ========================================================================= -->
+    <section id="view-landing" class="hidden space-y-8 animate-in fade-in duration-200">
+      
+      <!-- Welcome Hero -->
+      <div class="text-center max-w-2xl mx-auto pt-4 pb-2">
+        <span class="inline-block px-3 py-1 rounded-full bg-indigo-100 text-indigo-700 text-xs font-bold mb-3 tracking-wide uppercase">
+          Portal Sistem Informasi Satu Pintu
+        </span>
+        <h2 class="text-2xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
+          Selamat Datang di Portal Sekolah Terpadu
+        </h2>
+        <p class="mt-3 text-xs sm:text-sm text-slate-600 leading-relaxed">
+          Silakan pilih peran pengguna Anda di bawah ini untuk mengakses fitur yang disesuaikan secara khusus. Siswa otomatis terhubung ke seluruh rapor dan poin tanpa perlu login berulang.
+        </p>
+      </div>
+
+      <!-- 3 Pilihan Peran Pengguna -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+        
+        <!-- Kartu 1: SISWA -->
+        <div onclick="pilihPeran('siswa')" class="bg-white rounded-3xl p-6 sm:p-7 border-2 border-slate-200/90 hover:border-blue-500 shadow-sm hover:shadow-xl transition-all cursor-pointer flex flex-col justify-between group">
+          <div>
+            <div class="w-14 h-14 rounded-2xl bg-blue-100 text-blue-600 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform">
+              <i data-lucide="graduation-cap" class="w-8 h-8"></i>
+            </div>
+            <span class="text-[11px] font-bold text-blue-600 bg-blue-50 px-2.5 py-0.5 rounded-full uppercase tracking-wider">Akses Mandiri</span>
+            <h3 class="text-xl font-bold text-slate-900 mt-2 mb-2 group-hover:text-blue-600 transition">Peserta Didik (Siswa)</h3>
+            <p class="text-xs text-slate-500 leading-relaxed">
+              Lihat rapor nilai, riwayat presensi ekstrakurikuler, pencatatan 7 kebiasaan anak hebat, dan cek buku saku poin kedisiplinan Anda.
+            </p>
+          </div>
+          <div class="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between text-blue-600 font-bold text-xs">
+            <span>Masuk dengan NISN</span>
+            <i data-lucide="arrow-right" class="w-4 h-4 group-hover:translate-x-1 transition-transform"></i>
+          </div>
+        </div>
+
+        <!-- Kartu 2: GURU -->
+        <div onclick="pilihPeran('guru')" class="bg-white rounded-3xl p-6 sm:p-7 border-2 border-slate-200/90 hover:border-indigo-500 shadow-sm hover:shadow-xl transition-all cursor-pointer flex flex-col justify-between group">
+          <div>
+            <div class="w-14 h-14 rounded-2xl bg-indigo-100 text-indigo-600 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform">
+              <i data-lucide="briefcase" class="w-8 h-8"></i>
+            </div>
+            <span class="text-[11px] font-bold text-indigo-600 bg-indigo-50 px-2.5 py-0.5 rounded-full uppercase tracking-wider">Akses Tenaga Pendidik</span>
+            <h3 class="text-xl font-bold text-slate-900 mt-2 mb-2 group-hover:text-indigo-600 transition">Guru / Wali Kelas / BK</h3>
+            <p class="text-xs text-slate-500 leading-relaxed">
+              Pengisian nilai rapor massal, input absensi ekskul, validasi karakter pembiasaan 7 kebiasaan, serta pencatatan pelanggaran & tata tertib.
+            </p>
+          </div>
+          <div class="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between text-indigo-600 font-bold text-xs">
+            <span>Masuk dengan NIP / Nama</span>
+            <i data-lucide="arrow-right" class="w-4 h-4 group-hover:translate-x-1 transition-transform"></i>
+          </div>
+        </div>
+
+        <!-- Kartu 3: ADMIN -->
+        <div onclick="pilihPeran('admin')" class="bg-white rounded-3xl p-6 sm:p-7 border-2 border-slate-200/90 hover:border-emerald-500 shadow-sm hover:shadow-xl transition-all cursor-pointer flex flex-col justify-between group">
+          <div>
+            <div class="w-14 h-14 rounded-2xl bg-emerald-100 text-emerald-700 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform">
+              <i data-lucide="shield-check" class="w-8 h-8"></i>
+            </div>
+            <span class="text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full uppercase tracking-wider">Akses Penuh Pengelola</span>
+            <h3 class="text-xl font-bold text-slate-900 mt-2 mb-2 group-hover:text-emerald-700 transition">Administrator Portal</h3>
+            <p class="text-xs text-slate-500 leading-relaxed">
+              Kelola tautan Vercel / Apps Script, database master siswa & guru, sinkronisasi otomatis satu klik, dan konfigurasi sistem sekolah.
+            </p>
+          </div>
+          <div class="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between text-emerald-700 font-bold text-xs">
+            <span>Masuk dengan PIN Admin</span>
+            <i data-lucide="lock" class="w-4 h-4 group-hover:translate-x-1 transition-transform"></i>
+          </div>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- ========================================================================= -->
+    <!-- VIEW 1: PORTAL KHUSUS SISWA (DEDICATED STUDENT EXPERIENCE)               -->
+    <!-- ========================================================================= -->
+    <section id="view-siswa" class="hidden space-y-6 animate-in fade-in duration-200">
+      
+      <!-- Student Banner -->
+      <div class="bg-gradient-to-r from-blue-700 via-indigo-700 to-indigo-900 rounded-3xl p-6 sm:p-8 text-white shadow-lg flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div class="flex items-center space-x-4">
+          <div class="w-16 h-16 rounded-2xl bg-white/20 backdrop-blur-md text-white flex items-center justify-center font-bold text-2xl flex-shrink-0 border border-white/30">
+            <i data-lucide="user" class="w-8 h-8"></i>
+          </div>
+          <div>
+            <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-blue-400/30 text-blue-100 text-[11px] font-semibold mb-1">
+              <span>Portal Mandiri Siswa</span>
+            </div>
+            <h2 class="text-xl sm:text-2xl font-bold tracking-tight" id="lblSiswaNama">Ahmad Fauzan Pratama</h2>
+            <p class="text-xs text-blue-100 font-mono mt-0.5">
+              Kelas: <b id="lblSiswaKelas" class="font-sans">8-A</b> &bull; NISN: <b id="lblSiswaNisn">0081234567</b> &bull; Wali: <span id="lblSiswaWali">-</span>
+            </p>
+          </div>
+        </div>
+
+        <button onclick="logoutCurrentUser()" class="bg-white/15 hover:bg-white/25 text-white text-xs font-semibold px-4 py-2 rounded-xl border border-white/20 transition flex items-center gap-1.5">
+          <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
+          <span>Ganti Siswa</span>
+        </button>
+      </div>
+
+      <!-- Single Sign-On Info Notice -->
+      <div class="bg-blue-50 border border-blue-200 rounded-2xl p-4 flex items-center justify-between text-xs text-blue-900">
+        <div class="flex items-center gap-2.5">
+          <i data-lucide="check-circle" class="w-5 h-5 text-blue-600 flex-shrink-0"></i>
+          <span><b>Single Sign-On Aktif:</b> Anda otomatis masuk dengan akun ini saat membuka aplikasi di bawah tanpa perlu login atau memasukkan NISN lagi.</span>
+        </div>
+      </div>
+
+      <!-- 4 Core Applications for Students -->
+      <div>
+        <h3 class="text-base font-bold text-slate-900 mb-3 flex items-center gap-2">
+          <i data-lucide="grid" class="w-4 h-4 text-indigo-600"></i>
+          <span>Layanan Informasi Saya:</span>
+        </h3>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          
+          <!-- App 1: Nilai SMP (Student View) -->
+          <div class="bg-white rounded-2xl border border-slate-200/90 p-5 shadow-sm hover:shadow-md transition flex flex-col justify-between group">
+            <div>
+              <div class="w-12 h-12 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center mb-4">
+                <i data-lucide="award" class="w-6 h-6"></i>
+              </div>
+              <h4 class="font-bold text-base text-slate-900 group-hover:text-blue-600 transition">Rapor Nilai Siswa</h4>
+              <p class="text-xs text-slate-500 mt-1 leading-relaxed">
+                Lihat lembar hasil asesmen capaian belajar, nilai mata pelajaran, dan unduh lembar rapor resmi.
+              </p>
+            </div>
+            <div class="mt-5 pt-4 border-t border-slate-100">
+              <button onclick="bukaAplikasi('URL_NILAI_SMP', 'Aplikasi Nilai SMP')" class="w-full bg-blue-600 hover:bg-blue-700 active:scale-95 text-white text-xs font-semibold py-2.5 rounded-xl flex items-center justify-center space-x-1.5 transition shadow-sm shadow-blue-200">
+                <span>Cek Nilai Saya</span>
+                <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- App 2: Presensi Ekskul (Student View) -->
+          <div class="bg-white rounded-2xl border border-slate-200/90 p-5 shadow-sm hover:shadow-md transition flex flex-col justify-between group">
+            <div>
+              <div class="w-12 h-12 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center mb-4">
+                <i data-lucide="activity" class="w-6 h-6"></i>
+              </div>
+              <h4 class="font-bold text-base text-slate-900 group-hover:text-emerald-600 transition">Ekstrakurikuler</h4>
+              <p class="text-xs text-slate-500 mt-1 leading-relaxed">
+                Pantau riwayat kehadiran latihan, pendaftaran cabang ekskul, dan status keaktifan Anda.
+              </p>
+            </div>
+            <div class="mt-5 pt-4 border-t border-slate-100">
+              <button onclick="bukaAplikasi('URL_PRESENSI_EKSKUL', 'Presensi & Rekap Ekstrakurikuler')" class="w-full bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white text-xs font-semibold py-2.5 rounded-xl flex items-center justify-center space-x-1.5 transition shadow-sm shadow-emerald-200">
+                <span>Cek Absensi Ekskul</span>
+                <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- App 3: 7 Kebiasaan Anak Hebat -->
+          <div class="bg-white rounded-2xl border border-slate-200/90 p-5 shadow-sm hover:shadow-md transition flex flex-col justify-between group">
+            <div>
+              <div class="w-12 h-12 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center mb-4">
+                <i data-lucide="sparkles" class="w-6 h-6"></i>
+              </div>
+              <h4 class="font-bold text-base text-slate-900 group-hover:text-purple-600 transition">7 Kebiasaan Hebat</h4>
+              <p class="text-xs text-slate-500 mt-1 leading-relaxed">
+                Isi jurnal karakter harian, catatan shalat/ibadah, bangun pagi, dan lihat feedback dari wali kelas.
+              </p>
+            </div>
+            <div class="mt-5 pt-4 border-t border-slate-100">
+              <button onclick="bukaAplikasi('URL_7KEBIASAAN', '7 Kebiasaan Anak Hebat')" class="w-full bg-purple-600 hover:bg-purple-700 active:scale-95 text-white text-xs font-semibold py-2.5 rounded-xl flex items-center justify-center space-x-1.5 transition shadow-sm shadow-purple-200">
+                <span>Buka Jurnal Karakter</span>
+                <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- App 4: Pelanggaran & Poin Tata Tertib -->
+          <div class="bg-white rounded-2xl border border-slate-200/90 p-5 shadow-sm hover:shadow-md transition flex flex-col justify-between group">
+            <div>
+              <div class="w-12 h-12 rounded-xl bg-rose-100 text-rose-700 flex items-center justify-center mb-4">
+                <i data-lucide="shield-check" class="w-6 h-6"></i>
+              </div>
+              <h4 class="font-bold text-base text-slate-900 group-hover:text-rose-600 transition">Buku Poin Kedisiplinan</h4>
+              <p class="text-xs text-slate-500 mt-1 leading-relaxed">
+                Cek buku saku kedisiplinan Anda, pantau akumulasi poin tata tertib, dan status bimbingan konseling.
+              </p>
+            </div>
+            <div class="mt-5 pt-4 border-t border-slate-100">
+              <button onclick="bukaAplikasi('URL_PELANGGARAN_SISWA', 'Buku Pelanggaran Siswa')" class="w-full bg-rose-600 hover:bg-rose-700 active:scale-95 text-white text-xs font-semibold py-2.5 rounded-xl flex items-center justify-center space-x-1.5 transition shadow-sm shadow-rose-200">
+                <span>Cek Poin Saya</span>
+                <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ========================================================================= -->
+    <!-- VIEW 2: PORTAL KHUSUS GURU & TENAGA PENDIDIK (TEACHER EXPERIENCE)        -->
+    <!-- ========================================================================= -->
+    <section id="view-guru" class="hidden space-y-6 animate-in fade-in duration-200">
+      
+      <!-- Guru Banner -->
+      <div class="bg-gradient-to-r from-indigo-800 via-purple-800 to-slate-900 rounded-3xl p-6 sm:p-8 text-white shadow-lg flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div class="flex items-center space-x-4">
+          <div class="w-16 h-16 rounded-2xl bg-white/20 backdrop-blur-md text-white flex items-center justify-center font-bold text-2xl flex-shrink-0 border border-white/30">
+            <i data-lucide="briefcase" class="w-8 h-8"></i>
+          </div>
+          <div>
+            <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-purple-400/30 text-purple-100 text-[11px] font-semibold mb-1">
+              <span>Akses Pendidik & Tenaga Kependidikan</span>
+            </div>
+            <h2 class="text-xl sm:text-2xl font-bold tracking-tight" id="lblGuruNama">Budi Santoso, S.Pd.</h2>
+            <p class="text-xs text-purple-100 font-mono mt-0.5">
+              NIP: <b id="lblGuruNip">198002152005011002</b> &bull; Jabatan: <b id="lblGuruJabatan" class="font-sans">Wali Kelas 8-A</b> &bull; Binaan: <span id="lblGuruBinaan">8-A</span>
+            </p>
+          </div>
+        </div>
+
+        <button onclick="logoutCurrentUser()" class="bg-white/15 hover:bg-white/25 text-white text-xs font-semibold px-4 py-2 rounded-xl border border-white/20 transition flex items-center gap-1.5">
+          <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
+          <span>Ganti Akun Guru</span>
+        </button>
+      </div>
+
+      <!-- 4 Teacher Applications -->
+      <div>
+        <h3 class="text-base font-bold text-slate-900 mb-3 flex items-center gap-2">
+          <i data-lucide="layers" class="w-4 h-4 text-purple-600"></i>
+          <span>Modul Operasional Guru & Pembina:</span>
+        </h3>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          
+          <!-- App 1: Nilai SMP (Teacher Mode) -->
+          <div class="bg-white rounded-2xl border border-slate-200/90 p-5 shadow-sm hover:shadow-md transition flex flex-col justify-between group">
+            <div>
+              <div class="w-12 h-12 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center mb-4">
+                <i data-lucide="edit-3" class="w-6 h-6"></i>
+              </div>
+              <h4 class="font-bold text-base text-slate-900 group-hover:text-blue-600 transition">Input Nilai & Leger</h4>
+              <p class="text-xs text-slate-500 mt-1 leading-relaxed">
+                Kelola penilaian capaian siswa, pengisian nilai massal mata pelajaran, dan cetak leger kelas.
+              </p>
+            </div>
+            <div class="mt-5 pt-4 border-t border-slate-100">
+              <button onclick="bukaAplikasi('URL_NILAI_SMP', 'Aplikasi Nilai SMP')" class="w-full bg-blue-600 hover:bg-blue-700 active:scale-95 text-white text-xs font-semibold py-2.5 rounded-xl flex items-center justify-center space-x-1.5 transition shadow-sm shadow-blue-200">
+                <span>Buka Input Nilai</span>
+                <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- App 2: Presensi Ekskul (Coach Mode) -->
+          <div class="bg-white rounded-2xl border border-slate-200/90 p-5 shadow-sm hover:shadow-md transition flex flex-col justify-between group">
+            <div>
+              <div class="w-12 h-12 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center mb-4">
+                <i data-lucide="clipboard-check" class="w-6 h-6"></i>
+              </div>
+              <h4 class="font-bold text-base text-slate-900 group-hover:text-emerald-600 transition">Presensi Ekskul</h4>
+              <p class="text-xs text-slate-500 mt-1 leading-relaxed">
+                Input ketidakhadiran peserta ekskul, kelola anggota pendaftaran, dan cetak rekap absensi.
+              </p>
+            </div>
+            <div class="mt-5 pt-4 border-t border-slate-100">
+              <button onclick="bukaAplikasi('URL_PRESENSI_EKSKUL', 'Presensi & Rekap Ekstrakurikuler')" class="w-full bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white text-xs font-semibold py-2.5 rounded-xl flex items-center justify-center space-x-1.5 transition shadow-sm shadow-emerald-200">
+                <span>Buka Presensi Ekskul</span>
+                <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- App 3: 7 Kebiasaan (Wali Mode) -->
+          <div class="bg-white rounded-2xl border border-slate-200/90 p-5 shadow-sm hover:shadow-md transition flex flex-col justify-between group">
+            <div>
+              <div class="w-12 h-12 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center mb-4">
+                <i data-lucide="check-square" class="w-6 h-6"></i>
+              </div>
+              <h4 class="font-bold text-base text-slate-900 group-hover:text-purple-600 transition">Validasi 7 Kebiasaan</h4>
+              <p class="text-xs text-slate-500 mt-1 leading-relaxed">
+                Tinjau pembiasaan karakter harian siswa binaan, berikan catatan edukatif, dan rekap evaluasi.
+              </p>
+            </div>
+            <div class="mt-5 pt-4 border-t border-slate-100">
+              <button onclick="bukaAplikasi('URL_7KEBIASAAN', '7 Kebiasaan Anak Hebat')" class="w-full bg-purple-600 hover:bg-purple-700 active:scale-95 text-white text-xs font-semibold py-2.5 rounded-xl flex items-center justify-center space-x-1.5 transition shadow-sm shadow-purple-200">
+                <span>Validasi Kebiasaan</span>
+                <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- App 4: Pelanggaran & Tata Tertib (Guru Piket / BK) -->
+          <div class="bg-white rounded-2xl border border-slate-200/90 p-5 shadow-sm hover:shadow-md transition flex flex-col justify-between group">
+            <div>
+              <div class="w-12 h-12 rounded-xl bg-rose-100 text-rose-700 flex items-center justify-center mb-4">
+                <i data-lucide="shield-alert" class="w-6 h-6"></i>
+              </div>
+              <h4 class="font-bold text-base text-slate-900 group-hover:text-rose-600 transition">Catat Pelanggaran</h4>
+              <p class="text-xs text-slate-500 mt-1 leading-relaxed">
+                Scan QR kartu pelajar, razia atribut pagi, catat poin kejadian, dan cetak surat panggilan orang tua.
+              </p>
+            </div>
+            <div class="mt-5 pt-4 border-t border-slate-100">
+              <button onclick="bukaAplikasi('URL_PELANGGARAN_SISWA', 'Buku Pelanggaran Siswa')" class="w-full bg-rose-600 hover:bg-rose-700 active:scale-95 text-white text-xs font-semibold py-2.5 rounded-xl flex items-center justify-center space-x-1.5 transition shadow-sm shadow-rose-200">
+                <span>Catat Pelanggaran</span>
+                <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ========================================================================= -->
+    <!-- VIEW 3: PORTAL ADMINISTRATOR (FULL SYSTEM & DATABASE CONTROL)            -->
+    <!-- ========================================================================= -->
+    <section id="view-admin" class="hidden space-y-6 animate-in fade-in duration-200">
+      
+      <!-- Admin Sub-Navigation -->
+      <div class="bg-white p-3 rounded-2xl border border-slate-200/80 shadow-sm flex items-center justify-between flex-wrap gap-2">
+        <div class="flex items-center space-x-1 font-medium text-xs sm:text-sm">
+          <button onclick="switchAdminSubTab('dashboard')" id="admtab-dashboard" class="adm-nav-btn px-3 py-2 rounded-xl text-emerald-700 bg-emerald-50 font-bold flex items-center gap-1.5 transition">
+            <i data-lucide="layout-grid" class="w-4 h-4"></i>
+            <span>Dashboard & Tautan</span>
+          </button>
+          <button onclick="switchAdminSubTab('siswa')" id="admtab-siswa" class="adm-nav-btn px-3 py-2 rounded-xl text-slate-600 hover:bg-slate-100 flex items-center gap-1.5 transition">
+            <i data-lucide="users" class="w-4 h-4 text-blue-500"></i>
+            <span>Master Siswa</span>
+          </button>
+          <button onclick="switchAdminSubTab('guru')" id="admtab-guru" class="adm-nav-btn px-3 py-2 rounded-xl text-slate-600 hover:bg-slate-100 flex items-center gap-1.5 transition">
+            <i data-lucide="briefcase" class="w-4 h-4 text-purple-500"></i>
+            <span>Master Guru</span>
+          </button>
+          <button onclick="switchAdminSubTab('sync')" id="admtab-sync" class="adm-nav-btn px-3 py-2 rounded-xl text-slate-600 hover:bg-slate-100 flex items-center gap-1.5 transition">
+            <i data-lucide="refresh-cw" class="w-4 h-4 text-amber-500"></i>
+            <span>Sinkronisasi Otomatis</span>
+          </button>
+        </div>
+
+        <button onclick="logoutCurrentUser()" class="text-xs font-semibold px-3 py-2 bg-slate-100 hover:bg-rose-50 text-slate-600 hover:text-rose-600 rounded-xl transition flex items-center gap-1.5">
+          <i data-lucide="lock" class="w-3.5 h-3.5"></i>
+          <span>Kunci Admin</span>
+        </button>
+      </div>
+
+      <!-- SUB-TAB 1: ADMIN DASHBOARD & TAUTAN CEPAT -->
+      <div id="subtab-dashboard" class="subtab-content space-y-6">
+        
+        <!-- Metrics -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center space-x-4">
+            <div class="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center flex-shrink-0">
+              <i data-lucide="users" class="w-6 h-6"></i>
+            </div>
+            <div>
+              <p class="text-xs text-slate-500 font-medium">Total Siswa Terdata</p>
+              <h3 id="statTotalSiswa" class="text-xl sm:text-2xl font-bold text-slate-900">0</h3>
+            </div>
+          </div>
+
+          <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center space-x-4">
+            <div class="w-12 h-12 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center flex-shrink-0">
+              <i data-lucide="briefcase" class="w-6 h-6"></i>
+            </div>
+            <div>
+              <p class="text-xs text-slate-500 font-medium">Guru & Tenaga Kependidikan</p>
+              <h3 id="statTotalGuru" class="text-xl sm:text-2xl font-bold text-slate-900">0</h3>
+            </div>
+          </div>
+
+          <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center space-x-4">
+            <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center flex-shrink-0">
+              <i data-lucide="school" class="w-6 h-6"></i>
+            </div>
+            <div>
+              <p class="text-xs text-slate-500 font-medium">Rombongan Belajar (Kelas)</p>
+              <h3 id="statTotalKelas" class="text-xl sm:text-2xl font-bold text-slate-900">0</h3>
+            </div>
+          </div>
+        </div>
+
+        <!-- MANAJEMEN TAUTAN APLIKASI (VERCEL / GOOGLE APPS SCRIPT) -->
+        <div class="bg-white rounded-3xl border border-slate-200/90 p-6 shadow-sm space-y-4">
+          <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+            <div>
+              <h3 class="font-bold text-slate-900 text-base">Tautan URL 4 Aplikasi Sekolah</h3>
+              <p class="text-xs text-slate-500">Mendukung link dari <b>Vercel</b> (.vercel.app), <b>Google Apps Script</b>, atau domain lainnya.</p>
+            </div>
+            <span class="text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">
+              Multi-Platform Supported
+            </span>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            
+            <!-- Link 1: Nilai SMP -->
+            <div class="p-4 rounded-2xl border border-slate-200 bg-slate-50/50 space-y-2">
+              <div class="flex items-center justify-between">
+                <span class="font-bold text-xs text-slate-800 flex items-center gap-1.5">
+                  <i data-lucide="graduation-cap" class="w-4 h-4 text-blue-600"></i>
+                  <span>Aplikasi Nilai SMP</span>
+                </span>
+                <span id="badgeAdminNilai" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-200 text-slate-600">Belum Disetel</span>
+              </div>
+              <p class="text-[11px] text-slate-500 font-mono truncate" id="textAdminNilai">-</p>
+              <div class="flex items-center gap-2 pt-1">
+                <button onclick="bukaModalSetelUrl('URL_NILAI_SMP', 'Aplikasi Nilai SMP')" class="flex-grow text-xs font-semibold px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl shadow-xs transition flex items-center justify-center gap-1">
+                  <i data-lucide="edit" class="w-3.5 h-3.5"></i>
+                  <span>Atur Tautan (Vercel / GAS)</span>
+                </button>
+                <button onclick="ujiBukaUrlLangsung('URL_NILAI_SMP')" class="p-1.5 hover:bg-slate-200 text-slate-600 rounded-xl" title="Uji Tautan">
+                  <i data-lucide="external-link" class="w-4 h-4"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- Link 2: Presensi Ekskul -->
+            <div class="p-4 rounded-2xl border border-slate-200 bg-slate-50/50 space-y-2">
+              <div class="flex items-center justify-between">
+                <span class="font-bold text-xs text-slate-800 flex items-center gap-1.5">
+                  <i data-lucide="activity" class="w-4 h-4 text-emerald-600"></i>
+                  <span>Presensi & Rekap Ekskul</span>
+                </span>
+                <span id="badgeAdminEkskul" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-200 text-slate-600">Belum Disetel</span>
+              </div>
+              <p class="text-[11px] text-slate-500 font-mono truncate" id="textAdminEkskul">-</p>
+              <div class="flex items-center gap-2 pt-1">
+                <button onclick="bukaModalSetelUrl('URL_PRESENSI_EKSKUL', 'Presensi & Rekap Ekskul')" class="flex-grow text-xs font-semibold px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl shadow-xs transition flex items-center justify-center gap-1">
+                  <i data-lucide="edit" class="w-3.5 h-3.5"></i>
+                  <span>Atur Tautan (Vercel / GAS)</span>
+                </button>
+                <button onclick="ujiBukaUrlLangsung('URL_PRESENSI_EKSKUL')" class="p-1.5 hover:bg-slate-200 text-slate-600 rounded-xl" title="Uji Tautan">
+                  <i data-lucide="external-link" class="w-4 h-4"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- Link 3: 7 Kebiasaan -->
+            <div class="p-4 rounded-2xl border border-slate-200 bg-slate-50/50 space-y-2">
+              <div class="flex items-center justify-between">
+                <span class="font-bold text-xs text-slate-800 flex items-center gap-1.5">
+                  <i data-lucide="sparkles" class="w-4 h-4 text-purple-600"></i>
+                  <span>7 Kebiasaan Anak Hebat</span>
+                </span>
+                <span id="badgeAdmin7Kebiasaan" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-200 text-slate-600">Belum Disetel</span>
+              </div>
+              <p class="text-[11px] text-slate-500 font-mono truncate" id="textAdmin7Kebiasaan">-</p>
+              <div class="flex items-center gap-2 pt-1">
+                <button onclick="bukaModalSetelUrl('URL_7KEBIASAAN', '7 Kebiasaan Anak Hebat')" class="flex-grow text-xs font-semibold px-3 py-1.5 bg-purple-600 hover:bg-purple-700 text-white rounded-xl shadow-xs transition flex items-center justify-center gap-1">
+                  <i data-lucide="edit" class="w-3.5 h-3.5"></i>
+                  <span>Atur Tautan (Vercel / GAS)</span>
+                </button>
+                <button onclick="ujiBukaUrlLangsung('URL_7KEBIASAAN')" class="p-1.5 hover:bg-slate-200 text-slate-600 rounded-xl" title="Uji Tautan">
+                  <i data-lucide="external-link" class="w-4 h-4"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- Link 4: Pelanggaran Siswa -->
+            <div class="p-4 rounded-2xl border border-slate-200 bg-slate-50/50 space-y-2">
+              <div class="flex items-center justify-between">
+                <span class="font-bold text-xs text-slate-800 flex items-center gap-1.5">
+                  <i data-lucide="shield-alert" class="w-4 h-4 text-rose-600"></i>
+                  <span>Buku Pelanggaran Siswa</span>
+                </span>
+                <span id="badgeAdminPelanggaran" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-200 text-slate-600">Belum Disetel</span>
+              </div>
+              <p class="text-[11px] text-slate-500 font-mono truncate" id="textAdminPelanggaran">-</p>
+              <div class="flex items-center gap-2 pt-1">
+                <button onclick="bukaModalSetelUrl('URL_PELANGGARAN_SISWA', 'Buku Pelanggaran Siswa')" class="flex-grow text-xs font-semibold px-3 py-1.5 bg-rose-600 hover:bg-rose-700 text-white rounded-xl shadow-xs transition flex items-center justify-center gap-1">
+                  <i data-lucide="edit" class="w-3.5 h-3.5"></i>
+                  <span>Atur Tautan (Vercel / GAS)</span>
+                </button>
+                <button onclick="ujiBukaUrlLangsung('URL_PELANGGARAN_SISWA')" class="p-1.5 hover:bg-slate-200 text-slate-600 rounded-xl" title="Uji Tautan">
+                  <i data-lucide="external-link" class="w-4 h-4"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- Koneksi Backend Google Apps Script (Khusus Vercel) -->
+            <div class="col-span-1 md:col-span-2 p-4 rounded-2xl border border-indigo-200 bg-indigo-50/60 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+              <div class="space-y-1">
+                <div class="flex items-center gap-2">
+                  <i data-lucide="database" class="w-4 h-4 text-indigo-600"></i>
+                  <span class="font-bold text-xs text-slate-800">Backend API Google Apps Script (Spreadsheet Master)</span>
+                  <span id="badgePortalBackendStatus" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-200 text-slate-600">Otomatis / GAS</span>
+                </div>
+                <p class="text-[11px] text-slate-500 font-mono truncate max-w-xl" id="textPortalBackendUrl">Tersambung langsung jika dibuka dari Apps Script atau isi Web App URL jika di Vercel</p>
+              </div>
+              <button type="button" onclick="bukaModalBackendGas()" class="text-xs font-semibold px-3.5 py-2 bg-white border border-indigo-300 text-indigo-700 hover:bg-indigo-100 rounded-xl shadow-2xs transition flex items-center gap-1.5 flex-shrink-0">
+                <i data-lucide="settings-2" class="w-3.5 h-3.5"></i>
+                <span>Setel Web App URL</span>
+              </button>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+
+      <!-- SUB-TAB 2: MASTER SISWA -->
+      <div id="subtab-siswa" class="subtab-content hidden space-y-4">
+        <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div>
+            <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
+              <i data-lucide="users" class="w-5 h-5 text-blue-600"></i>
+              <span>Master Database Siswa Terpusat</span>
+            </h3>
+            <p class="text-xs text-slate-500">Angka nol di depan NISN (10 digit) dijamin utuh dan diformat teks otomatis.</p>
+          </div>
+          <button onclick="modalTambahSiswa()" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold px-4 py-2.5 rounded-xl flex items-center space-x-1.5 shadow-sm transition">
+            <i data-lucide="user-plus" class="w-4 h-4"></i>
+            <span>+ Tambah Siswa Baru</span>
+          </button>
+        </div>
+
+        <!-- Filter Siswa -->
+        <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div class="sm:col-span-2">
+            <label class="block text-[11px] font-semibold text-slate-500 mb-1">Cari Nama / NISN Siswa</label>
+            <div class="relative">
+              <input type="text" id="searchMasterSiswa" oninput="renderMasterSiswaTable()" placeholder="Ketik nama atau NISN (contoh: 0081234567)..." class="w-full text-xs pl-8 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500">
+              <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-2.5 top-2.5"></i>
+            </div>
+          </div>
+          <div>
+            <label class="block text-[11px] font-semibold text-slate-500 mb-1">Filter Kelas</label>
+            <select id="filterKelasSiswa" onchange="renderMasterSiswaTable()" class="w-full text-xs px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500">
+              <option value="">Semua Kelas</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Tabel Siswa -->
+        <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs text-slate-600">
+              <thead class="bg-slate-50 text-slate-700 font-semibold border-b border-slate-200">
+                <tr>
+                  <th class="py-3 px-4 text-center w-12">No</th>
+                  <th class="py-3 px-4 font-mono">NISN (10 Digit)</th>
+                  <th class="py-3 px-4">Nama Lengkap Siswa</th>
+                  <th class="py-3 px-4">Kelas</th>
+                  <th class="py-3 px-4 text-center">L/P</th>
+                  <th class="py-3 px-4">Wali Kelas</th>
+                  <th class="py-3 px-4">No. HP Orang Tua</th>
+                  <th class="py-3 px-4 text-center">Status</th>
+                </tr>
+              </thead>
+              <tbody id="tableMasterSiswa" class="divide-y divide-slate-100">
+                <tr><td colspan="8" class="text-center py-6 text-slate-400">Memuat data siswa...</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="p-3 bg-slate-50 border-t border-slate-200 text-xs text-slate-500 flex items-center justify-between">
+            <span id="siswaCountInfo">Menampilkan 0 siswa</span>
+            <span class="text-[11px] text-slate-400">Proteksi 10-Digit Plain Text Utuh</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- SUB-TAB 3: MASTER GURU -->
+      <div id="subtab-guru" class="subtab-content hidden space-y-4">
+        <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div>
+            <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
+              <i data-lucide="briefcase" class="w-5 h-5 text-purple-600"></i>
+              <span>Master Pendidik & Tenaga Kependidikan</span>
+            </h3>
+            <p class="text-xs text-slate-500">Data guru mata pelajaran, wali kelas, guru BK, dan staf sekolah.</p>
+          </div>
+          <button onclick="modalTambahGuru()" class="bg-purple-600 hover:bg-purple-700 text-white text-xs font-semibold px-4 py-2.5 rounded-xl flex items-center space-x-1.5 shadow-sm transition">
+            <i data-lucide="user-plus" class="w-4 h-4"></i>
+            <span>+ Tambah Guru / Staf</span>
+          </button>
+        </div>
+
+        <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs text-slate-600">
+              <thead class="bg-slate-50 text-slate-700 font-semibold border-b border-slate-200">
+                <tr>
+                  <th class="py-3 px-4 text-center w-12">No</th>
+                  <th class="py-3 px-4 font-mono">NIP</th>
+                  <th class="py-3 px-4">Nama Lengkap & Gelar</th>
+                  <th class="py-3 px-4">Jabatan</th>
+                  <th class="py-3 px-4">Role Sistem</th>
+                  <th class="py-3 px-4">Binaan</th>
+                  <th class="py-3 px-4">Kontak / WA</th>
+                </tr>
+              </thead>
+              <tbody id="tableMasterGuru" class="divide-y divide-slate-100">
+                <tr><td colspan="7" class="text-center py-6 text-slate-400">Memuat data guru...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- SUB-TAB 4: SINKRONISASI -->
+      <div id="subtab-sync" class="subtab-content hidden space-y-4">
+        <div class="bg-gradient-to-r from-indigo-900 to-blue-900 rounded-3xl p-6 sm:p-8 text-white shadow-lg space-y-3">
+          <span class="inline-block bg-white/20 text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider">
+            ⚡ Sinkronisasi Satu Pintu
+          </span>
+          <h3 class="text-xl font-bold">Salin Data Siswa ke Seluruh Aplikasi dalam 1 Klik</h3>
+          <p class="text-xs text-indigo-100 max-w-2xl leading-relaxed">
+            Admin cukup menginput data siswa di Portal Master ini. Klik tombol di bawah untuk menyalin seluruh data siswa otomatis ke Spreadsheet Aplikasi Nilai, Ekskul, 7 Kebiasaan, dan Pelanggaran tanpa perlu input berulang!
+          </p>
+          <div class="pt-2">
+            <button onclick="jalankanSinkronisasiOtomatis()" class="bg-emerald-500 hover:bg-emerald-600 active:scale-95 text-white text-xs font-bold px-6 py-3 rounded-xl shadow-md transition flex items-center gap-2">
+              <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+              <span>Mulai Sinkronisasi Sekarang</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- ==================== MODAL PILIH / GANTI PERAN PENGGUNA ==================== -->
+  <div id="modalPilihPeran" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl relative animate-in fade-in zoom-in duration-150">
+      
+      <button onclick="tutupModalPilihPeran()" class="absolute top-5 right-5 text-slate-400 hover:text-slate-600 p-1 rounded-lg">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+
+      <div class="text-center mb-5">
+        <div class="w-12 h-12 rounded-2xl bg-indigo-100 text-indigo-600 mx-auto flex items-center justify-center mb-2">
+          <i data-lucide="user-check" class="w-6 h-6"></i>
+        </div>
+        <h3 class="font-bold text-slate-900 text-lg">Pilih Peran Masuk</h3>
+        <p class="text-xs text-slate-500">Masuk sesuai identitas Anda di sekolah</p>
+      </div>
+
+      <!-- Tab Peran -->
+      <div class="grid grid-cols-3 gap-1 p-1 bg-slate-100 rounded-xl mb-4 text-xs font-semibold">
+        <button type="button" onclick="pilihTabModalPeran('siswa')" id="btnTabModalSiswa" class="py-2 rounded-lg bg-white text-blue-600 shadow-xs">Siswa</button>
+        <button type="button" onclick="pilihTabModalPeran('guru')" id="btnTabModalGuru" class="py-2 rounded-lg text-slate-600 hover:text-slate-900">Guru</button>
+        <button type="button" onclick="pilihTabModalPeran('admin')" id="btnTabModalAdmin" class="py-2 rounded-lg text-slate-600 hover:text-slate-900">Admin</button>
+      </div>
+
+      <!-- FORM SISWA -->
+      <div id="formModalSiswa" class="space-y-3">
+        <div>
+          <label class="block text-[11px] font-semibold text-slate-600 mb-1">Cari / Ketik 10 Digit NISN Anda:</label>
+          <input type="text" id="inputLoginNisn" oninput="onInputLoginNisnChanged()" placeholder="Contoh: 0081234567..." class="w-full text-xs px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl font-mono">
+        </div>
+        <div>
+          <label class="block text-[11px] font-semibold text-slate-600 mb-1">Atau Pilih dari Daftar Nama Siswa:</label>
+          <select id="selectLoginSiswa" onchange="onSelectLoginSiswaChanged()" class="w-full text-xs px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl">
+            <option value="">-- Pilih Nama Anda --</option>
+          </select>
+        </div>
+        <div class="pt-2">
+          <button onclick="submitLoginSiswa()" class="w-full bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold py-2.5 rounded-xl shadow-xs transition">
+            Masuk sebagai Siswa
+          </button>
+        </div>
+      </div>
+
+      <!-- FORM GURU -->
+      <div id="formModalGuru" class="hidden space-y-3">
+        <div>
+          <label class="block text-[11px] font-semibold text-slate-600 mb-1">Pilih Identitas Guru / Staf:</label>
+          <select id="selectLoginGuru" class="w-full text-xs px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl">
+            <option value="">-- Pilih Nama Guru --</option>
+          </select>
+        </div>
+        <div class="pt-2">
+          <button onclick="submitLoginGuru()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold py-2.5 rounded-xl shadow-xs transition">
+            Masuk sebagai Guru
+          </button>
+        </div>
+      </div>
+
+      <!-- FORM ADMIN -->
+      <div id="formModalAdmin" class="hidden space-y-3">
+        <div>
+          <label class="block text-[11px] font-semibold text-slate-600 mb-1">Masukkan PIN Administrator:</label>
+          <input type="password" id="inputLoginPin" placeholder="PIN Admin (Default: 123456)" maxlength="12" class="w-full text-xs px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-center font-mono tracking-widest text-base">
+        </div>
+        <div class="pt-2">
+          <button onclick="submitLoginAdmin()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold py-2.5 rounded-xl shadow-xs transition">
+            Masuk sebagai Administrator
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ==================== MODAL SETEL TAUTAN CEPAT (VERCEL / GAS) ==================== -->
+  <div id="modalSetelUrl" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl relative animate-in fade-in zoom-in duration-150">
+      
+      <button onclick="tutupModalSetelUrl()" class="absolute top-5 right-5 text-slate-400 hover:text-slate-600 p-1 rounded-lg">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+
+      <div class="flex items-center space-x-3 mb-4">
+        <div class="w-10 h-10 rounded-xl bg-indigo-100 text-indigo-600 flex items-center justify-center flex-shrink-0">
+          <i data-lucide="link" class="w-5 h-5"></i>
+        </div>
+        <div>
+          <h3 class="font-bold text-slate-900 text-base" id="mdlSetelTitle">Atur Tautan Aplikasi</h3>
+          <p class="text-xs text-slate-500">Mendukung tautan Vercel atau Google Apps Script</p>
+        </div>
+      </div>
+
+      <div class="space-y-3">
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Tempel / Masukkan Link Aplikasi:</label>
+          <input type="text" id="inputModalUrlApp" placeholder="https://aplikasi-anda.vercel.app" class="w-full text-xs px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl font-mono focus:ring-2 focus:ring-indigo-500">
+          <p class="text-[11px] text-slate-400 mt-1">
+            Contoh Vercel: <code class="text-indigo-600">https://nilai-smp.vercel.app</code><br>
+            Atau Apps Script: <code class="text-indigo-600">https://script.google.com/macros/s/.../exec</code>
+          </p>
+        </div>
+
+        <!-- Tombol Uji Langsung -->
+        <div class="flex items-center justify-between p-2.5 bg-slate-50 border border-slate-200 rounded-xl">
+          <span class="text-[11px] text-slate-600">Pastikan link dapat dibuka:</span>
+          <button type="button" onclick="ujiBukaUrlDariModal()" class="text-xs font-semibold px-3 py-1 bg-white hover:bg-slate-100 text-indigo-600 border border-slate-200 rounded-lg flex items-center gap-1 shadow-2xs">
+            <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+            <span>Tes Buka</span>
+          </button>
+        </div>
+
+        <div class="pt-2 flex items-center justify-end space-x-2">
+          <button type="button" onclick="tutupModalSetelUrl()" class="text-xs font-semibold px-4 py-2 text-slate-600 hover:bg-slate-100 rounded-xl">
+            Batal
+          </button>
+          <button type="button" id="btnSimpanModalUrl" onclick="simpanUrlDariModal()" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-5 py-2.5 rounded-xl shadow-xs transition">
+            Simpan Tautan
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ==================== MODAL KONEKSI BACKEND GAS (VERCEL) ==================== -->
+  <div id="modalSetelBackendGas" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl relative animate-in fade-in zoom-in duration-150">
+      
+      <button onclick="tutupModalBackendGas()" class="absolute top-5 right-5 text-slate-400 hover:text-slate-600 p-1 rounded-lg">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+
+      <div class="flex items-center space-x-3 mb-4">
+        <div class="w-10 h-10 rounded-xl bg-indigo-100 text-indigo-600 flex items-center justify-center flex-shrink-0">
+          <i data-lucide="database" class="w-5 h-5"></i>
+        </div>
+        <div>
+          <h3 class="font-bold text-slate-900 text-base">Backend Google Apps Script</h3>
+          <p class="text-xs text-slate-500">Koneksi Spreadsheet saat di-hosting di Vercel</p>
+        </div>
+      </div>
+
+      <div class="space-y-3">
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Web App Exec URL Google Apps Script:</label>
+          <input type="text" id="inputBackendGasUrl" placeholder="https://script.google.com/macros/s/.../exec" class="w-full text-xs px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl font-mono focus:ring-2 focus:ring-indigo-500">
+          <p class="text-[11px] text-slate-400 mt-1">
+            Dapatkan dari menu <b>Deploy > New deployment > Web app</b> di Google Apps Script (Who has access: Anyone).
+          </p>
+        </div>
+
+        <!-- Tombol Uji Koneksi -->
+        <div class="flex items-center justify-between p-2.5 bg-slate-50 border border-slate-200 rounded-xl">
+          <span class="text-[11px] text-slate-600">Tes komunikasi API:</span>
+          <button type="button" onclick="ujiKoneksiBackendGas()" class="text-xs font-semibold px-3 py-1 bg-white hover:bg-slate-100 text-indigo-600 border border-slate-200 rounded-lg flex items-center gap-1 shadow-2xs">
+            <i data-lucide="activity" class="w-3.5 h-3.5"></i>
+            <span>Uji Respon</span>
+          </button>
+        </div>
+
+        <div class="pt-2 flex items-center justify-end space-x-2">
+          <button type="button" onclick="tutupModalBackendGas()" class="text-xs font-semibold px-4 py-2 text-slate-600 hover:bg-slate-100 rounded-xl">
+            Batal
+          </button>
+          <button type="button" id="btnSimpanBackendGas" onclick="simpanBackendGasUrl()" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-5 py-2.5 rounded-xl shadow-xs transition">
+            Simpan & Muat Data
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- JAVASCRIPT LOGIC & SINGLE SIGN-ON ENGINE -->
+  <script>
+    let appData = {
+      config: {},
+      summary: {},
+      siswaList: [],
+      guruList: [],
+      daftarKelas: []
+    };
+
+    let currentUser = null; // { role: 'siswa'|'guru'|'admin', ...detail }
+    let currentEditingAppKey = null;
+
+    // Normalizer NISN 10-Digit
+    function formatNisn(val) {
+      if (val === null || val === undefined) return '';
+      let str = String(val).trim();
+      if (str.startsWith("'")) str = str.substring(1).trim();
+      str = str.replace(/\.0+$/, '').replace(/[^0-9]/g, '');
+      if (!str) return '';
+      if (str.length >= 7 && str.length < 10) {
+        str = str.padStart(10, '0');
+      }
+      return str;
+    }
+
+    // Normalizer URL (menambahkan https:// jika user mengetikkan 'app.vercel.app' tanpa protokol)
+    function normalizeUrl(url) {
+      if (!url) return '';
+      let trimmed = String(url).trim();
+      if (!trimmed.startsWith('http://') && !trimmed.startsWith('https://')) {
+        trimmed = 'https://' + trimmed;
+      }
+      return trimmed;
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      lucide.createIcons();
+      pulihkanSesiPengguna();
+      loadDataFromBackend();
+    });
+
+    // ==========================================
+    // SISTEM SESI & ROLE-BASED ACCESS
+    // ==========================================
+    function pulihkanSesiPengguna() {
+      const savedRole = sessionStorage.getItem('portal_role');
+      const savedUserJson = sessionStorage.getItem('portal_user');
+      if (savedRole && savedUserJson) {
+        try {
+          currentUser = JSON.parse(savedUserJson);
+          renderRoleView(savedRole);
+          return;
+        } catch (e) {}
+      }
+
+      // Jika belum login, tampilkan Landing Screen
+      renderRoleView('landing');
+    }
+
+    function simpanSesiPengguna(role, userObj) {
+      currentUser = { role, ...userObj };
+      sessionStorage.setItem('portal_role', role);
+      sessionStorage.setItem('portal_user', JSON.stringify(currentUser));
+      renderRoleView(role);
+    }
+
+    function logoutCurrentUser() {
+      currentUser = null;
+      sessionStorage.removeItem('portal_role');
+      sessionStorage.removeItem('portal_user');
+      renderRoleView('landing');
+      Swal.fire({
+        toast: true,
+        position: 'top-end',
+        icon: 'info',
+        title: 'Anda telah keluar',
+        showConfirmButton: false,
+        timer: 1500
+      });
+    }
+
+    function renderRoleView(role) {
+      const views = ['landing', 'siswa', 'guru', 'admin'];
+      views.forEach(v => {
+        const el = document.getElementById('view-' + v);
+        if (el) el.classList.add('hidden');
+      });
+
+      const userPill = document.getElementById('userProfilePill');
+      const btnLogout = document.getElementById('btnLogout');
+      const btnLoginHeader = document.getElementById('btnLoginHeader');
+
+      if (role === 'landing') {
+        document.getElementById('view-landing').classList.remove('hidden');
+        userPill.classList.add('hidden');
+        btnLogout.classList.add('hidden');
+        btnLoginHeader.classList.remove('hidden');
+      } else if (role === 'siswa') {
+        document.getElementById('view-siswa').classList.remove('hidden');
+        userPill.classList.remove('hidden');
+        btnLogout.classList.remove('hidden');
+        btnLoginHeader.classList.add('hidden');
+
+        document.getElementById('userRoleTitle').innerText = `Siswa: ${currentUser.nama || 'Siswa'}`;
+        document.getElementById('userRoleSub').innerText = `Kelas ${currentUser.kelas || '-'} • NISN: ${currentUser.nisn || '-'}`;
+        document.getElementById('lblSiswaNama').innerText = currentUser.nama || '-';
+        document.getElementById('lblSiswaKelas').innerText = currentUser.kelas || '-';
+        document.getElementById('lblSiswaNisn').innerText = currentUser.nisn || '-';
+        document.getElementById('lblSiswaWali').innerText = currentUser.wali || '-';
+      } else if (role === 'guru') {
+        document.getElementById('view-guru').classList.remove('hidden');
+        userPill.classList.remove('hidden');
+        btnLogout.classList.remove('hidden');
+        btnLoginHeader.classList.add('hidden');
+
+        document.getElementById('userRoleTitle').innerText = `Guru: ${currentUser.nama || 'Guru'}`;
+        document.getElementById('userRoleSub').innerText = `${currentUser.jabatan || 'Pendidik'}`;
+        document.getElementById('lblGuruNama').innerText = currentUser.nama || '-';
+        document.getElementById('lblGuruNip').innerText = currentUser.nip || '-';
+        document.getElementById('lblGuruJabatan').innerText = currentUser.jabatan || '-';
+        document.getElementById('lblGuruBinaan').innerText = currentUser.kelas || '-';
+      } else if (role === 'admin') {
+        document.getElementById('view-admin').classList.remove('hidden');
+        userPill.classList.remove('hidden');
+        btnLogout.classList.remove('hidden');
+        btnLoginHeader.classList.add('hidden');
+
+        document.getElementById('userRoleTitle').innerText = `Administrator`;
+        document.getElementById('userRoleSub').innerText = `Akses Penuh Portal`;
+      }
+
+      lucide.createIcons();
+    }
+
+    function navigateHome() {
+      if (currentUser && currentUser.role) {
+        renderRoleView(currentUser.role);
+      } else {
+        renderRoleView('landing');
+      }
+    }
+
+    function bukaModalGantiPeran() {
+      populateModalDropdowns();
+      document.getElementById('modalPilihPeran').classList.remove('hidden');
+    }
+
+    function tutupModalPilihPeran() {
+      document.getElementById('modalPilihPeran').classList.add('hidden');
+    }
+
+    function pilihTabModalPeran(role) {
+      ['siswa', 'guru', 'admin'].forEach(r => {
+        const btn = document.getElementById('btnTabModal' + capitalize(r));
+        const form = document.getElementById('formModal' + capitalize(r));
+        if (r === role) {
+          btn.className = 'py-2 rounded-lg bg-white text-blue-600 shadow-xs font-bold';
+          form.classList.remove('hidden');
+        } else {
+          btn.className = 'py-2 rounded-lg text-slate-600 hover:text-slate-900';
+          form.classList.add('hidden');
+        }
+      });
+    }
+
+    function pilihPeran(role) {
+      bukaModalGantiPeran();
+      pilihTabModalPeran(role);
+    }
+
+    function populateModalDropdowns() {
+      // Dropdown Siswa
+      const selS = document.getElementById('selectLoginSiswa');
+      selS.innerHTML = '<option value="">-- Pilih Nama Anda --</option>';
+      (appData.siswaList || []).forEach(s => {
+        const opt = document.createElement('option');
+        const cNisn = formatNisn(s.nisn);
+        opt.value = cNisn;
+        opt.innerText = `${s.nama} (${s.kelas}) - NISN: ${cNisn}`;
+        selS.appendChild(opt);
+      });
+
+      // Dropdown Guru
+      const selG = document.getElementById('selectLoginGuru');
+      selG.innerHTML = '<option value="">-- Pilih Nama Guru --</option>';
+      (appData.guruList || []).forEach(g => {
+        const opt = document.createElement('option');
+        opt.value = g.nip || g.nama;
+        opt.innerText = `${g.nama} (${g.jabatan})`;
+        selG.appendChild(opt);
+      });
+    }
+
+    function onInputLoginNisnChanged() {
+      const inputNisn = formatNisn(document.getElementById('inputLoginNisn').value);
+      const match = (appData.siswaList || []).find(s => formatNisn(s.nisn) === inputNisn);
+      if (match) {
+        document.getElementById('selectLoginSiswa').value = formatNisn(match.nisn);
+      }
+    }
+
+    function onSelectLoginSiswaChanged() {
+      const selNisn = document.getElementById('selectLoginSiswa').value;
+      if (selNisn) {
+        document.getElementById('inputLoginNisn').value = selNisn;
+      }
+    }
+
+    function submitLoginSiswa() {
+      const cNisn = formatNisn(document.getElementById('inputLoginNisn').value || document.getElementById('selectLoginSiswa').value);
+      if (!cNisn) {
+        Swal.fire('Perhatian', 'Silakan ketik atau pilih NISN Anda!', 'warning');
+        return;
+      }
+
+      const match = (appData.siswaList || []).find(s => formatNisn(s.nisn) === cNisn);
+      if (!match) {
+        Swal.fire('Tidak Ditemukan', `NISN ${cNisn} tidak terdaftar di database master siswa.`, 'error');
+        return;
+      }
+
+      simpanSesiPengguna('siswa', {
+        nisn: cNisn,
+        nama: match.nama,
+        kelas: match.kelas,
+        wali: match.wali
+      });
+      tutupModalPilihPeran();
+      Swal.fire({
+        toast: true,
+        position: 'top-end',
+        icon: 'success',
+        title: `Selamat datang, ${match.nama}!`,
+        showConfirmButton: false,
+        timer: 1600
+      });
+    }
+
+    function submitLoginGuru() {
+      const val = document.getElementById('selectLoginGuru').value;
+      if (!val) {
+        Swal.fire('Perhatian', 'Silakan pilih identitas guru terlebih dahulu!', 'warning');
+        return;
+      }
+
+      const match = (appData.guruList || []).find(g => (g.nip && g.nip === val) || g.nama === val);
+      if (!match) return;
+
+      simpanSesiPengguna('guru', {
+        nip: match.nip,
+        nama: match.nama,
+        jabatan: match.jabatan,
+        kelas: match.kelas
+      });
+      tutupModalPilihPeran();
+      Swal.fire({
+        toast: true,
+        position: 'top-end',
+        icon: 'success',
+        title: `Selamat bertugas, ${match.nama}!`,
+        showConfirmButton: false,
+        timer: 1600
+      });
+    }
+
+    // ==========================================
+    // BACKEND API & VERCEL BRIDGE
+    // ==========================================
+    function getPortalApiUrl() {
+      const urlParam = new URLSearchParams(window.location.search).get('api');
+      if (urlParam) {
+        localStorage.setItem('portal_backend_api_url', urlParam);
+        return urlParam;
+      }
+      return localStorage.getItem('portal_backend_api_url') || '';
+    }
+
+    function setPortalApiUrl(url) {
+      if (url) {
+        localStorage.setItem('portal_backend_api_url', normalizeUrl(url));
+      } else {
+        localStorage.removeItem('portal_backend_api_url');
+      }
+      updateBackendStatusCard();
+    }
+
+    function isRunningOnGas() {
+      return typeof google !== 'undefined' && Boolean(google.script && google.script.run);
+    }
+
+    async function callPortalApi(action, payload = {}) {
+      // 1. Jika native di dalam Google Apps Script Web App
+      if (isRunningOnGas()) {
+        return new Promise((resolve) => {
+          const runner = google.script.run
+            .withSuccessHandler((res) => resolve(res))
+            .withFailureHandler((err) => resolve({ success: false, error: err.toString() }));
+          
+          if (action === 'getPortalData') runner.getPortalData();
+          else if (action === 'verifyAdminPin') runner.verifyAdminPin(payload.pin);
+          else if (action === 'simpanPengaturan') runner.simpanPengaturan(payload.config, payload.pin);
+          else if (action === 'simpanUrlAplikasi') runner.simpanUrlAplikasi(payload.appKey, payload.url, payload.pin);
+          else if (action === 'simpanSiswaBaru') runner.simpanSiswaBaru(payload.siswa, payload.pin);
+          else if (action === 'simpanGuruBaru') runner.simpanGuruBaru(payload.guru, payload.pin);
+          else if (action === 'syncDataKeSemuaAplikasi') runner.syncDataKeSemuaAplikasi(payload.pin);
+          else resolve({ success: false, error: 'Aksi tidak dikenal: ' + action });
+        });
+      }
+
+      // 2. Jika di Vercel dan sudah ada Web App Exec URL Google Apps Script
+      const apiUrl = getPortalApiUrl();
+      if (apiUrl) {
+        try {
+          const resp = await fetch(apiUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({ action, ...payload })
+          });
+          const json = await resp.json();
+          return json;
+        } catch (err) {
+          console.error('Koneksi ke backend Apps Script gagal:', err);
+          return { success: false, error: 'Gagal terhubung ke Google Apps Script: ' + err.message };
+        }
+      }
+
+      // 3. Fallback jika di Vercel tapi belum ada Web App Exec URL (Demo Mode)
+      if (action === 'getPortalData') {
+        return getMockData();
+      } else if (action === 'verifyAdminPin') {
+        const ok = payload.pin === '123456';
+        return { success: ok, error: ok ? null : 'PIN Administrator salah (PIN default demo: 123456)' };
+      } else if (action === 'simpanUrlAplikasi') {
+        if (!appData.config) appData.config = {};
+        appData.config[payload.appKey] = payload.url;
+        return { success: true, message: 'Disimpan di sesi lokal (Demo mode)' };
+      } else if (action === 'simpanSiswaBaru') {
+        if (!appData.siswaList) appData.siswaList = [];
+        appData.siswaList.unshift(payload.siswa);
+        return { success: true, message: 'Siswa tersimpan di memori lokal' };
+      } else if (action === 'simpanGuruBaru') {
+        if (!appData.guruList) appData.guruList = [];
+        appData.guruList.unshift(payload.guru);
+        return { success: true, message: 'Guru tersimpan di memori lokal' };
+      } else if (action === 'syncDataKeSemuaAplikasi') {
+        return { success: true, message: 'Sinkronisasi demo berhasil dijalankan' };
+      }
+      return { success: true };
+    }
+
+    function bukaModalBackendGas() {
+      const currentUrl = getPortalApiUrl();
+      document.getElementById('inputBackendGasUrl').value = currentUrl;
+      document.getElementById('modalSetelBackendGas').classList.remove('hidden');
+    }
+
+    function tutupModalBackendGas() {
+      document.getElementById('modalSetelBackendGas').classList.add('hidden');
+    }
+
+    async function ujiKoneksiBackendGas() {
+      const raw = document.getElementById('inputBackendGasUrl').value.trim();
+      if (!raw) {
+        Swal.fire('Perhatian', 'Silakan tempel URL Web App Google Apps Script Anda!', 'warning');
+        return;
+      }
+      const testUrl = normalizeUrl(raw);
+      Swal.fire({
+        title: 'Menguji Koneksi...',
+        text: 'Mengirim tes komunikasi ke Google Apps Script Web App',
+        allowOutsideClick: false,
+        didOpen: () => { Swal.showLoading(); }
+      });
+
+      try {
+        const resp = await fetch(testUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({ action: 'ping' })
+        });
+        const json = await resp.json();
+        if (json && (json.success || json.timestamp)) {
+          Swal.fire('Koneksi Berhasil! 🟢', 'Backend Google Apps Script merespons dengan baik.', 'success');
+        } else {
+          Swal.fire('Respon Diterima', 'Backend merespons: ' + JSON.stringify(json), 'info');
+        }
+      } catch (e) {
+        Swal.fire('Koneksi Gagal 🔴', 'Tidak dapat menghubungi Web App: ' + e.message + '<br><small class="text-slate-400">Pastikan Web App di-deploy dengan akses: Anyone</small>', 'error');
+      }
+    }
+
+    function simpanBackendGasUrl() {
+      const raw = document.getElementById('inputBackendGasUrl').value.trim();
+      if (raw) {
+        setPortalApiUrl(raw);
+        tutupModalBackendGas();
+        Swal.fire('Berhasil Disimpan', 'URL Backend tersimpan. Memuat data terbaru...', 'success');
+        loadDataFromBackend();
+      } else {
+        setPortalApiUrl('');
+        tutupModalBackendGas();
+        Swal.fire('Info', 'URL Backend dihapus, portal beralih ke mode offline/demo.', 'info');
+        loadDataFromBackend();
+      }
+    }
+
+    function updateBackendStatusCard() {
+      const badge = document.getElementById('badgePortalBackendStatus');
+      const txt = document.getElementById('textPortalBackendUrl');
+      if (!badge || !txt) return;
+
+      if (isRunningOnGas()) {
+        badge.innerText = 'Google Apps Script (Native)';
+        badge.className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800';
+        txt.innerText = 'Tersambung langsung ke Spreadsheet Master internal';
+      } else {
+        const apiUrl = getPortalApiUrl();
+        if (apiUrl) {
+          badge.innerText = '▲ Tersambung via GAS API';
+          badge.className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-100 text-blue-800';
+          txt.innerText = apiUrl;
+        } else {
+          badge.innerText = 'Mode Demo / Standalone';
+          badge.className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-800';
+          txt.innerText = 'Belum terhubung ke Web App URL - Klik "Setel Web App URL" untuk sinkronisasi';
+        }
+      }
+    }
+
+    // ==========================================
+    // PROGRESSIVE WEB APP (PWA) & ANDROID INSTALL
+    // ==========================================
+    let deferredPwaPrompt = null;
+
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js')
+          .then((reg) => console.log('ServiceWorker registered:', reg.scope))
+          .catch((err) => console.warn('ServiceWorker register failed:', err));
+      });
+    }
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPwaPrompt = e;
+      
+      const headerBtn = document.getElementById('btnPwaInstallHeader');
+      if (headerBtn) headerBtn.classList.remove('hidden');
+
+      const banner = document.getElementById('pwaInstallBanner');
+      if (banner && !sessionStorage.getItem('pwa_banner_dismissed')) {
+        banner.classList.remove('hidden');
+      }
+    });
+
+    function triggerPwaInstall() {
+      if (deferredPwaPrompt) {
+        deferredPwaPrompt.prompt();
+        deferredPwaPrompt.userChoice.then((choiceResult) => {
+          if (choiceResult.outcome === 'accepted') {
+            console.log('User installed PWA');
+          }
+          deferredPwaPrompt = null;
+          dismissPwaBanner();
+        });
+      } else {
+        Swal.fire({
+          title: 'Pasang di HP Android',
+          html: `
+            <div class="text-left text-xs space-y-3 text-slate-700">
+              <p class="font-medium text-slate-800">Aplikasi ini dirancang sebagai <b>Progressive Web App (PWA)</b> yang dapat diinstal langsung di HP Android tanpa Google Play Store:</p>
+              <div class="p-3 bg-slate-50 border border-slate-200 rounded-xl space-y-2">
+                <div class="flex items-start gap-2">
+                  <span class="w-5 h-5 rounded-full bg-indigo-600 text-white text-[11px] font-bold flex items-center justify-center flex-shrink-0">1</span>
+                  <span>Buka link ini di browser <b>Google Chrome</b> di HP Anda.</span>
+                </div>
+                <div class="flex items-start gap-2">
+                  <span class="w-5 h-5 rounded-full bg-indigo-600 text-white text-[11px] font-bold flex items-center justify-center flex-shrink-0">2</span>
+                  <span>Ketuk menu titik tiga <b>(⋮)</b> di pojok kanan atas browser Chrome.</span>
+                </div>
+                <div class="flex items-start gap-2">
+                  <span class="w-5 h-5 rounded-full bg-indigo-600 text-white text-[11px] font-bold flex items-center justify-center flex-shrink-0">3</span>
+                  <span>Pilih <b>"Instal Aplikasi"</b> atau <b>"Tambahkan ke Layar Utama"</b> (<i>Add to Home screen</i>).</span>
+                </div>
+                <div class="flex items-start gap-2">
+                  <span class="w-5 h-5 rounded-full bg-indigo-600 text-white text-[11px] font-bold flex items-center justify-center flex-shrink-0">4</span>
+                  <span>Konfirmasi <b>Instal</b>. Ikon portal sekolah akan langsung muncul di menu HP Anda!</span>
+                </div>
+              </div>
+              <p class="text-[11px] text-slate-400">Setelah diinstal, portal dapat dibuka dalam layar penuh (fullscreen) layaknya aplikasi Android asli.</p>
+            </div>
+          `,
+          confirmButtonText: 'Saya Mengerti',
+          confirmButtonColor: '#4f46e5'
+        });
+      }
+    }
+
+    function dismissPwaBanner() {
+      const banner = document.getElementById('pwaInstallBanner');
+      if (banner) banner.classList.add('hidden');
+      sessionStorage.setItem('pwa_banner_dismissed', 'true');
+    }
+
+    window.addEventListener('appinstalled', () => {
+      dismissPwaBanner();
+      const headerBtn = document.getElementById('btnPwaInstallHeader');
+      if (headerBtn) headerBtn.classList.add('hidden');
+      Swal.fire({
+        toast: true,
+        position: 'top-end',
+        icon: 'success',
+        title: 'Aplikasi berhasil dipasang di layar utama!',
+        showConfirmButton: false,
+        timer: 2000
+      });
+    });
+
+    async function submitLoginAdmin() {
+      const pin = document.getElementById('inputLoginPin').value;
+      if (!pin) {
+        Swal.fire('Perhatian', 'Silakan masukkan PIN Administrator!', 'warning');
+        return;
+      }
+
+      Swal.fire({
+        title: 'Memverifikasi...',
+        allowOutsideClick: false,
+        didOpen: () => Swal.showLoading()
+      });
+
+      const res = await callPortalApi('verifyAdminPin', { pin: pin });
+      Swal.close();
+
+      if (res && res.success) {
+        simpanSesiPengguna('admin', { pin: pin });
+        tutupModalPilihPeran();
+        Swal.fire('Akses Diberikan', 'Selamat datang di Panel Administrator.', 'success');
+      } else {
+        Swal.fire('Akses Ditolak', (res && res.error) || 'PIN Administrator salah!', 'error');
+      }
+    }
+
+    // ==========================================
+    // SINGLE SIGN-ON (SSO) LAUNCHER
+    // ==========================================
+    function bukaAplikasi(appKey, appName) {
+      const url = appData.config && appData.config[appKey];
+      if (!url || url.trim().length < 5) {
+        if (currentUser && currentUser.role === 'admin') {
+          bukaModalSetelUrl(appKey, appName);
+        } else {
+          Swal.fire({
+            title: `Aplikasi Belum Terhubung`,
+            html: `Tautan untuk <b>${appName}</b> belum diatur oleh Administrator sekolah. Silakan hubungi bagian Admin/Kurikulum.`,
+            icon: 'info'
+          });
+        }
+        return;
+      }
+
+      let targetUrl = normalizeUrl(url);
+      const portalUrl = window.location.href.split('?')[0];
+
+      // Susun parameter SSO terpadu
+      const separator = targetUrl.includes('?') ? '&' : '?';
+      let ssoParams = `portal_url=${encodeURIComponent(portalUrl)}`;
+
+      if (currentUser && currentUser.role === 'siswa') {
+        ssoParams += `&role=siswa&nisn=${encodeURIComponent(formatNisn(currentUser.nisn))}&nama=${encodeURIComponent(currentUser.nama)}&kelas=${encodeURIComponent(currentUser.kelas)}`;
+      } else if (currentUser && currentUser.role === 'guru') {
+        ssoParams += `&role=guru&nip=${encodeURIComponent(currentUser.nip || '')}&nama=${encodeURIComponent(currentUser.nama)}&jabatan=${encodeURIComponent(currentUser.jabatan || '')}`;
+      } else if (currentUser && currentUser.role === 'admin') {
+        ssoParams += `&role=admin`;
+      }
+
+      window.open(`${targetUrl}${separator}${ssoParams}`, '_blank');
+    }
+
+    // ==========================================
+    // PENGELOLAAN TAUTAN VERCEL / GAS OLEH ADMIN
+    // ==========================================
+    function bukaModalSetelUrl(appKey, appName) {
+      currentEditingAppKey = appKey;
+      document.getElementById('mdlSetelTitle').innerText = `Atur Tautan ${appName}`;
+      const existingUrl = (appData.config && appData.config[appKey]) || '';
+      document.getElementById('inputModalUrlApp').value = existingUrl;
+      document.getElementById('modalSetelUrl').classList.remove('hidden');
+    }
+
+    function tutupModalSetelUrl() {
+      document.getElementById('modalSetelUrl').classList.add('hidden');
+      currentEditingAppKey = null;
+    }
+
+    function ujiBukaUrlDariModal() {
+      const raw = document.getElementById('inputModalUrlApp').value;
+      if (!raw) {
+        Swal.fire('Perhatian', 'Silakan ketik atau tempel link terlebih dahulu!', 'warning');
+        return;
+      }
+      const finalUrl = normalizeUrl(raw);
+      window.open(finalUrl, '_blank');
+    }
+
+    function ujiBukaUrlLangsung(appKey) {
+      const url = appData.config && appData.config[appKey];
+      if (!url) {
+        Swal.fire('Tautan Kosong', 'Tautan untuk aplikasi ini belum diisi.', 'info');
+        return;
+      }
+      window.open(normalizeUrl(url), '_blank');
+    }
+
+    async function simpanUrlDariModal() {
+      if (!currentEditingAppKey) return;
+      const raw = document.getElementById('inputModalUrlApp').value;
+      const cleanUrl = normalizeUrl(raw);
+      const adminPin = (currentUser && currentUser.pin) || '123456';
+
+      const btn = document.getElementById('btnSimpanModalUrl');
+      btn.disabled = true;
+      btn.innerText = 'Menyimpan...';
+
+      const res = await callPortalApi('simpanUrlAplikasi', {
+        appKey: currentEditingAppKey,
+        url: cleanUrl,
+        pin: adminPin
+      });
+
+      btn.disabled = false;
+      btn.innerText = 'Simpan Tautan';
+
+      if (res && res.success) {
+        if (!appData.config) appData.config = {};
+        appData.config[currentEditingAppKey] = cleanUrl;
+        tutupModalSetelUrl();
+        Swal.fire('Berhasil Disimpan', 'Tautan aplikasi berhasil diperbarui!', 'success');
+        refreshData();
+      } else {
+        Swal.fire('Gagal', (res && res.error) || 'Gagal menyimpan tautan', 'error');
+      }
+    }
+
+    // ==========================================
+    // DATA FETCHING & RENDERING
+    // ==========================================
+    async function loadDataFromBackend() {
+      document.getElementById('loadingOverlay').classList.remove('hidden');
+      try {
+        const data = await callPortalApi('getPortalData');
+        onDataLoaded(data);
+      } catch (err) {
+        onDataError(err);
+      }
+    }
+
+    async function refreshData(showToast = false) {
+      const icon = document.getElementById('iconRefresh');
+      if (icon) icon.classList.add('animate-spin');
+
+      try {
+        const res = await callPortalApi('getPortalData');
+        if (icon) icon.classList.remove('animate-spin');
+        onDataLoaded(res);
+        if (showToast) {
+          Swal.fire({
+            toast: true,
+            position: 'top-end',
+            icon: 'success',
+            title: 'Data berhasil diperbarui',
+            showConfirmButton: false,
+            timer: 1500
+          });
+        }
+      } catch (err) {
+        if (icon) icon.classList.remove('animate-spin');
+        onDataError(err);
+      }
+    }
+
+    function onDataLoaded(data) {
+      document.getElementById('loadingOverlay').classList.add('hidden');
+      if (!data || !data.success) {
+        Swal.fire('Gagal Memuat Data', (data && data.error) || 'Terjadi kesalahan sistem', 'error');
+        return;
+      }
+
+      appData = data;
+      renderAllViews();
+    }
+
+    function onDataError(error) {
+      document.getElementById('loadingOverlay').classList.add('hidden');
+      Swal.fire('Koneksi Gagal', error.toString(), 'error');
+    }
+
+    function renderAllViews() {
+      const c = appData.config || {};
+      const schoolName = c.NAMA_SEKOLAH || 'SMP NEGERI INDONESIA HEBAT';
+      document.getElementById('navSchoolName').innerText = schoolName;
+
+      // Update Badges Admin Dashboard
+      updateAdminAppCard('Nilai', c.URL_NILAI_SMP);
+      updateAdminAppCard('Ekskul', c.URL_PRESENSI_EKSKUL);
+      updateAdminAppCard('7Kebiasaan', c.URL_7KEBIASAAN);
+      updateAdminAppCard('Pelanggaran', c.URL_PELANGGARAN_SISWA);
+      updateBackendStatusCard();
+
+      const s = appData.summary || {};
+      document.getElementById('statTotalSiswa').innerText = s.totalSiswa || 0;
+      document.getElementById('statTotalGuru').innerText = s.totalGuru || 0;
+      document.getElementById('statTotalKelas').innerText = s.totalKelas || 0;
+
+      populateFilterKelasDropdown();
+      renderMasterSiswaTable();
+      renderMasterGuruTable();
+
+      lucide.createIcons();
+    }
+
+    function updateAdminAppCard(keyName, url) {
+      const badge = document.getElementById('badgeAdmin' + keyName);
+      const txt = document.getElementById('textAdmin' + keyName);
+      if (!badge || !txt) return;
+
+      if (url && url.trim().length > 5) {
+        const clean = normalizeUrl(url);
+        txt.innerText = clean;
+        if (clean.includes('vercel.app')) {
+          badge.innerText = '▲ Vercel';
+          badge.className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-900 text-white';
+        } else if (clean.includes('script.google.com')) {
+          badge.innerText = 'Google Apps Script';
+          badge.className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-100 text-blue-700';
+        } else {
+          badge.innerText = 'Tersambung';
+          badge.className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700';
+        }
+      } else {
+        txt.innerText = 'Belum disetel - Klik tombol di bawah';
+        badge.innerText = 'Belum Disetel';
+        badge.className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-200 text-slate-500';
+      }
+    }
+
+    function switchAdminSubTab(subId) {
+      document.querySelectorAll('.subtab-content').forEach(el => el.classList.add('hidden'));
+      const activeSub = document.getElementById('subtab-' + subId);
+      if (activeSub) activeSub.classList.remove('hidden');
+
+      document.querySelectorAll('.adm-nav-btn').forEach(btn => {
+        btn.className = 'adm-nav-btn px-3 py-2 rounded-xl text-slate-600 hover:bg-slate-100 flex items-center gap-1.5 transition';
+      });
+      const activeBtn = document.getElementById('admtab-' + subId);
+      if (activeBtn) {
+        activeBtn.className = 'adm-nav-btn px-3 py-2 rounded-xl text-emerald-700 bg-emerald-50 font-bold flex items-center gap-1.5 transition';
+      }
+
+      lucide.createIcons();
+    }
+
+    function populateFilterKelasDropdown() {
+      const sel = document.getElementById('filterKelasSiswa');
+      if (!sel) return;
+      sel.innerHTML = '<option value="">Semua Kelas</option>';
+      (appData.daftarKelas || []).forEach(k => {
+        const opt = document.createElement('option');
+        opt.value = k;
+        opt.innerText = `Kelas ${k}`;
+        sel.appendChild(opt);
+      });
+    }
+
+    function renderMasterSiswaTable() {
+      const searchRaw = (document.getElementById('searchMasterSiswa').value || '').toLowerCase().trim();
+      const searchNisn = formatNisn(searchRaw);
+      const kelas = document.getElementById('filterKelasSiswa').value;
+
+      const filtered = (appData.siswaList || []).filter(s => {
+        const sNisn = formatNisn(s.nisn);
+        const matchSearch = s.nama.toLowerCase().includes(searchRaw) || 
+                            sNisn.includes(searchRaw) || 
+                            (searchNisn && sNisn === searchNisn);
+        const matchKelas = !kelas || s.kelas === kelas;
+        return matchSearch && matchKelas;
+      });
+
+      const tbody = document.getElementById('tableMasterSiswa');
+      document.getElementById('siswaCountInfo').innerText = `Menampilkan ${filtered.length} dari ${(appData.siswaList || []).length} total siswa`;
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="8" class="text-center py-6 text-slate-400">Tidak ada data siswa ditemukan.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = filtered.map((s, idx) => {
+        const cNisn = formatNisn(s.nisn);
+        return `
+          <tr class="hover:bg-slate-50 transition">
+            <td class="py-3 px-4 text-center font-bold text-slate-500">${idx + 1}</td>
+            <td class="py-3 px-4 font-mono font-semibold text-slate-900">${cNisn}</td>
+            <td class="py-3 px-4 font-bold text-slate-900">${s.nama}</td>
+            <td class="py-3 px-4 font-semibold text-slate-700">${s.kelas}</td>
+            <td class="py-3 px-4 text-center">${s.jk}</td>
+            <td class="py-3 px-4 text-slate-700">${s.wali}</td>
+            <td class="py-3 px-4 font-mono text-[11px] text-slate-500">${s.hp || '-'}</td>
+            <td class="py-3 px-4 text-center"><span class="text-[10px] px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 font-semibold">${s.status}</span></td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function renderMasterGuruTable() {
+      const tbody = document.getElementById('tableMasterGuru');
+      const list = appData.guruList || [];
+
+      if (list.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" class="text-center py-6 text-slate-400">Belum ada data guru.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = list.map((g, idx) => {
+        return `
+          <tr class="hover:bg-slate-50 transition">
+            <td class="py-3 px-4 text-center font-bold text-slate-500">${idx + 1}</td>
+            <td class="py-3 px-4 font-mono text-[11px] text-slate-600">${g.nip}</td>
+            <td class="py-3 px-4 font-bold text-slate-900">${g.nama}</td>
+            <td class="py-3 px-4 text-slate-700">${g.jabatan}</td>
+            <td class="py-3 px-4"><span class="text-[10px] px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-700 font-semibold">${g.role}</span></td>
+            <td class="py-3 px-4 text-slate-600">${g.kelas}</td>
+            <td class="py-3 px-4 font-mono text-[11px] text-slate-500">${g.hp || '-'}</td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    async function jalankanSinkronisasiOtomatis() {
+      const pin = (currentUser && currentUser.pin) || '123456';
+      Swal.fire({
+        title: 'Mulai Sinkronisasi Data?',
+        html: 'Data siswa dari Master Portal akan otomatis disalin ke Spreadsheet <b>Nilai SMP</b>, <b>Ekskul</b>, <b>7 Kebiasaan</b>, dan <b>Buku Pelanggaran</b> dengan format NISN teks 10 digit terlindungi.',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Ya, Sinkronkan!',
+        cancelButtonText: 'Batal'
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          Swal.fire({
+            title: 'Sedang Sinkronisasi...',
+            allowOutsideClick: false,
+            didOpen: () => { Swal.showLoading(); }
+          });
+
+          const res = await callPortalApi('syncDataKeSemuaAplikasi', { pin });
+          if (res && res.success) {
+            Swal.fire('Sinkronisasi Selesai', res.message || 'Data siswa berhasil disalin ke seluruh aplikasi!', 'success');
+          } else {
+            Swal.fire('Gagal', (res && res.error) || 'Gagal sinkronisasi data', 'error');
+          }
+        }
+      });
+    }
+
+    function modalTambahSiswa() {
+      const pin = (currentUser && currentUser.pin) || '123456';
+      Swal.fire({
+        title: 'Tambah Siswa Master',
+        html: `
+          <input id="swalNisn" class="swal2-input" placeholder="NISN Siswa (Contoh: 0081234567)">
+          <input id="swalNama" class="swal2-input" placeholder="Nama Lengkap Siswa">
+          <input id="swalKelas" class="swal2-input" placeholder="Kelas (Contoh: 8-A)">
+          <select id="swalJk" class="swal2-input">
+            <option value="L">Laki-Laki</option>
+            <option value="P">Perempuan</option>
+          </select>
+          <input id="swalWali" class="swal2-input" placeholder="Nama Wali Kelas">
+          <input id="swalHp" class="swal2-input" placeholder="No. HP Orang Tua / WA">
+        `,
+        focusConfirm: false,
+        showCancelButton: true,
+        confirmButtonText: 'Simpan Siswa',
+        cancelButtonText: 'Batal',
+        preConfirm: () => {
+          return {
+            nisn: document.getElementById('swalNisn').value,
+            nama: document.getElementById('swalNama').value,
+            kelas: document.getElementById('swalKelas').value,
+            jk: document.getElementById('swalJk').value,
+            wali: document.getElementById('swalWali').value,
+            hp: document.getElementById('swalHp').value
+          };
+        }
+      }).then(async (result) => {
+        if (result.isConfirmed && result.value) {
+          if (!result.value.nisn || !result.value.nama || !result.value.kelas) {
+            Swal.fire('Perhatian', 'NISN, Nama, dan Kelas wajib diisi!', 'warning');
+            return;
+          }
+          Swal.fire({ title: 'Menyimpan...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+          const res = await callPortalApi('simpanSiswaBaru', { siswa: result.value, pin });
+          if (res && res.success) {
+            Swal.fire('Berhasil', 'Siswa berhasil ditambahkan ke Master!', 'success');
+            refreshData();
+          } else {
+            Swal.fire('Gagal', (res && res.error) || 'Gagal menyimpan siswa', 'error');
+          }
+        }
+      });
+    }
+
+    function modalTambahGuru() {
+      const pin = (currentUser && currentUser.pin) || '123456';
+      Swal.fire({
+        title: 'Tambah Guru Master',
+        html: `
+          <input id="swalNip" class="swal2-input" placeholder="NIP (atau '-' jika honorer)">
+          <input id="swalNamaGuru" class="swal2-input" placeholder="Nama Lengkap & Gelar">
+          <input id="swalJabatan" class="swal2-input" placeholder="Jabatan (Contoh: Wali Kelas 8-A)">
+          <select id="swalRole" class="swal2-input">
+            <option value="Guru / Wali">Guru / Wali Kelas</option>
+            <option value="Guru BK">Guru Bimbingan Konseling (BK)</option>
+            <option value="Pembina Ekskul">Pembina / Pelatih Ekskul</option>
+            <option value="Kepsek">Kepala Sekolah / Kesiswaan</option>
+          </select>
+          <input id="swalKelasBinaan" class="swal2-input" placeholder="Kelas Binaan (atau '-')">
+          <input id="swalHpGuru" class="swal2-input" placeholder="No. HP / WhatsApp">
+        `,
+        focusConfirm: false,
+        showCancelButton: true,
+        confirmButtonText: 'Simpan Guru',
+        cancelButtonText: 'Batal',
+        preConfirm: () => {
+          return {
+            nip: document.getElementById('swalNip').value,
+            nama: document.getElementById('swalNamaGuru').value,
+            jabatan: document.getElementById('swalJabatan').value,
+            role: document.getElementById('swalRole').value,
+            kelas: document.getElementById('swalKelasBinaan').value,
+            hp: document.getElementById('swalHpGuru').value
+          };
+        }
+      }).then(async (result) => {
+        if (result.isConfirmed && result.value) {
+          if (!result.value.nama) {
+            Swal.fire('Perhatian', 'Nama Guru wajib diisi!', 'warning');
+            return;
+          }
+          Swal.fire({ title: 'Menyimpan...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+          const res = await callPortalApi('simpanGuruBaru', { guru: result.value, pin });
+          if (res && res.success) {
+            Swal.fire('Berhasil', 'Guru berhasil ditambahkan ke Master!', 'success');
+            refreshData();
+          } else {
+            Swal.fire('Gagal', (res && res.error) || 'Gagal menyimpan guru', 'error');
+          }
+        }
+      });
+    }
+
+    function capitalize(s) {
+      if (!s) return '';
+      return s.charAt(0).toUpperCase() + s.slice(1);
+    }
+
+    function getMockData() {
+      return {
+        success: true,
+        config: {
+          NAMA_SEKOLAH: 'SMP NEGERI INDONESIA HEBAT',
+          ALAMAT_SEKOLAH: 'Jl. Pendidikan No. 1, Kota Kita',
+          TAHUN_AJARAN: '2026/2027',
+          SEMESTER: 'Ganjil',
+          URL_NILAI_SMP: '',
+          URL_PRESENSI_EKSKUL: '',
+          URL_7KEBIASAAN: '',
+          URL_PELANGGARAN_SISWA: ''
+        },
+        summary: {
+          totalSiswa: 8,
+          totalGuru: 7,
+          totalKelas: 4
+        },
+        daftarKelas: ['7-A', '8-A', '8-B', '9-A'],
+        guruList: [
+          { nip: '197501012000031001', nama: 'Drs. Hartono, M.Pd.', jabatan: 'Kepala Sekolah', role: 'Kepsek', kelas: '-', hp: '081234500001', status: 'Aktif' },
+          { nip: '198002152005011002', nama: 'Budi Santoso, S.Pd.', jabatan: 'Wali Kelas 8-A', role: 'Guru / Wali', kelas: '8-A', hp: '081234500002', status: 'Aktif' },
+          { nip: '198506202008012003', nama: 'Dewi Lestari, S.Pd.', jabatan: 'Wali Kelas 8-B', role: 'Guru / Wali', kelas: '8-B', hp: '081234500003', status: 'Aktif' },
+          { nip: '199008142015022006', nama: 'Rina Anggraini, S.Pd.', jabatan: 'Guru Bimbingan Konseling (BK)', role: 'Guru BK', kelas: 'Semua', hp: '081234500006', status: 'Aktif' }
+        ],
+        siswaList: [
+          { nisn: '0081234567', nama: 'Ahmad Fauzan Pratama', kelas: '8-A', jk: 'L', wali: 'Budi Santoso, S.Pd.', hp: '081234567890', status: 'Aktif' },
+          { nisn: '0082345678', nama: 'Siti Aisyah Rahmawati', kelas: '8-A', jk: 'P', wali: 'Budi Santoso, S.Pd.', hp: '081234567891', status: 'Aktif' },
+          { nisn: '0083456789', nama: 'Muhammad Rizky Kurniawan', kelas: '8-B', jk: 'L', wali: 'Dewi Lestari, S.Pd.', hp: '081234567892', status: 'Aktif' },
+          { nisn: '0084567890', nama: 'Cantika Putri Maharani', kelas: '8-B', jk: 'P', wali: 'Dewi Lestari, S.Pd.', hp: '081234567893', status: 'Aktif' },
+          { nisn: '0085678901', nama: 'Dimas Arya Wicaksana', kelas: '9-A', jk: 'L', wali: 'Agus Setiawan, M.Pd.', hp: '081234567894', status: 'Aktif' },
+          { nisn: '0086789012', nama: 'Nabila Zahra Syahrani', kelas: '9-A', jk: 'P', wali: 'Agus Setiawan, M.Pd.', hp: '081234567895', status: 'Aktif' },
+          { nisn: '0087890123', nama: 'Fajar Hidayat', kelas: '7-A', jk: 'L', wali: 'Sri Wahyuni, S.Pd.', hp: '081234567896', status: 'Aktif' },
+          { nisn: '0088901234', nama: 'Anisa Rahma', kelas: '7-A', jk: 'P', wali: 'Sri Wahyuni, S.Pd.', hp: '081234567897', status: 'Aktif' }
+        ]
+      };
+    }
+  </script>
+</body>
+</html>
