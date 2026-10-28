@@ -247,16 +247,30 @@
               <span>Portal Mandiri Siswa</span>
             </div>
             <h2 class="text-xl sm:text-2xl font-bold tracking-tight" id="lblSiswaNama">Ahmad Fauzan Pratama</h2>
-            <p class="text-xs text-blue-100 font-mono mt-0.5">
-              Kelas: <b id="lblSiswaKelas" class="font-sans">8-A</b> &bull; NISN: <b id="lblSiswaNisn">0081234567</b> &bull; Wali: <span id="lblSiswaWali">-</span>
+            <p class="text-xs text-blue-100 font-mono mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-1">
+              <span>Kelas: <b id="lblSiswaKelas" class="font-sans">8-A</b></span>
+              <span>&bull;</span>
+              <span>NISN: <b id="lblSiswaNisn">0081234567</b></span>
+              <span>&bull;</span>
+              <span>Wali: <span id="lblSiswaWali">-</span></span>
+            </p>
+            <p class="text-xs text-blue-200 mt-1.5 flex items-center gap-1.5">
+              <i data-lucide="phone" class="w-3.5 h-3.5 text-blue-300"></i>
+              <span>No. HP / WA Orang Tua: <b id="lblSiswaHpOrtu" class="font-mono text-white tracking-wider">081234567890</b></span>
             </p>
           </div>
         </div>
 
-        <button onclick="logoutCurrentUser()" class="bg-white/15 hover:bg-white/25 text-white text-xs font-semibold px-4 py-2 rounded-xl border border-white/20 transition flex items-center gap-1.5">
-          <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
-          <span>Ganti Siswa</span>
-        </button>
+        <div class="flex items-center gap-2 self-stretch md:self-auto justify-end">
+          <button onclick="bukaModalEditProfilSiswa()" class="bg-white/20 hover:bg-white/30 active:scale-95 text-white text-xs font-semibold px-3.5 py-2 rounded-xl border border-white/30 transition flex items-center gap-1.5 shadow-sm">
+            <i data-lucide="edit" class="w-3.5 h-3.5"></i>
+            <span>Edit No. HP Ortu</span>
+          </button>
+          <button onclick="logoutCurrentUser()" class="bg-white/10 hover:bg-white/20 text-white text-xs font-semibold px-3 py-2 rounded-xl border border-white/20 transition flex items-center gap-1.5">
+            <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
+            <span>Ganti Siswa</span>
+          </button>
+        </div>
       </div>
 
       <!-- Single Sign-On Info Notice -->
@@ -373,16 +387,30 @@
               <span>Akses Pendidik & Tenaga Kependidikan</span>
             </div>
             <h2 class="text-xl sm:text-2xl font-bold tracking-tight" id="lblGuruNama">Budi Santoso, S.Pd.</h2>
-            <p class="text-xs text-purple-100 font-mono mt-0.5">
-              NIP: <b id="lblGuruNip">198002152005011002</b> &bull; Jabatan: <b id="lblGuruJabatan" class="font-sans">Wali Kelas 8-A</b> &bull; Binaan: <span id="lblGuruBinaan">8-A</span>
+            <p class="text-xs text-purple-100 font-mono mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-1">
+              <span>NIP: <b id="lblGuruNip">198002152005011002</b></span>
+              <span>&bull;</span>
+              <span>Jabatan: <b id="lblGuruJabatan" class="font-sans">Wali Kelas 8-A</b></span>
+              <span>&bull;</span>
+              <span>Binaan: <b id="lblGuruBinaan" class="font-sans">8-A</b></span>
+            </p>
+            <p class="text-xs text-purple-200 mt-1.5 flex items-center gap-1.5">
+              <i data-lucide="phone" class="w-3.5 h-3.5 text-purple-300"></i>
+              <span>Kontak HP / WA: <b id="lblGuruHp" class="font-mono text-white tracking-wider">-</b></span>
             </p>
           </div>
         </div>
 
-        <button onclick="logoutCurrentUser()" class="bg-white/15 hover:bg-white/25 text-white text-xs font-semibold px-4 py-2 rounded-xl border border-white/20 transition flex items-center gap-1.5">
-          <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
-          <span>Ganti Akun Guru</span>
-        </button>
+        <div class="flex items-center gap-2 self-stretch md:self-auto justify-end">
+          <button onclick="bukaModalEditProfilGuru()" class="bg-white/20 hover:bg-white/30 active:scale-95 text-white text-xs font-semibold px-3.5 py-2 rounded-xl border border-white/30 transition flex items-center gap-1.5 shadow-sm">
+            <i data-lucide="user-cog" class="w-3.5 h-3.5"></i>
+            <span>Edit Profil & Binaan</span>
+          </button>
+          <button onclick="logoutCurrentUser()" class="bg-white/10 hover:bg-white/20 text-white text-xs font-semibold px-3 py-2 rounded-xl border border-white/20 transition flex items-center gap-1.5">
+            <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
+            <span>Ganti Akun Guru</span>
+          </button>
+        </div>
       </div>
 
       <!-- 4 Teacher Applications -->
@@ -810,18 +838,19 @@
       <!-- FORM SISWA -->
       <div id="formModalSiswa" class="space-y-3">
         <div>
-          <label class="block text-[11px] font-semibold text-slate-600 mb-1">Cari / Ketik 10 Digit NISN Anda:</label>
-          <input type="text" id="inputLoginNisn" oninput="onInputLoginNisnChanged()" placeholder="Contoh: 0081234567..." class="w-full text-xs px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl font-mono">
-        </div>
-        <div>
-          <label class="block text-[11px] font-semibold text-slate-600 mb-1">Atau Pilih dari Daftar Nama Siswa:</label>
-          <select id="selectLoginSiswa" onchange="onSelectLoginSiswaChanged()" class="w-full text-xs px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl">
-            <option value="">-- Pilih Nama Anda --</option>
-          </select>
+          <label class="block text-[11px] font-semibold text-slate-700 mb-1 flex items-center justify-between">
+            <span>Masukkan 10 Digit NISN Siswa:</span>
+            <span class="text-[10px] text-blue-600 font-mono">10 Digit Angka</span>
+          </label>
+          <input type="text" id="inputLoginNisn" onkeydown="if(event.key==='Enter') submitLoginSiswa()" placeholder="Contoh: 0081234567" maxlength="12" inputmode="numeric" class="w-full text-sm px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl font-mono tracking-wider focus:ring-2 focus:ring-blue-500 text-center font-bold text-slate-800">
+          <p class="text-[11px] text-slate-400 mt-1 leading-tight">
+            Masukkan NISN resmi Anda. Angka 0 di depan tetap dipertahankan.
+          </p>
         </div>
         <div class="pt-2">
-          <button onclick="submitLoginSiswa()" class="w-full bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold py-2.5 rounded-xl shadow-xs transition">
-            Masuk sebagai Siswa
+          <button type="button" onclick="submitLoginSiswa()" class="w-full bg-blue-600 hover:bg-blue-700 active:scale-98 text-white text-xs font-bold py-2.5 rounded-xl shadow-xs transition flex items-center justify-center gap-1.5">
+            <i data-lucide="log-in" class="w-4 h-4"></i>
+            <span>Masuk sebagai Siswa</span>
           </button>
         </div>
       </div>
@@ -829,14 +858,19 @@
       <!-- FORM GURU -->
       <div id="formModalGuru" class="hidden space-y-3">
         <div>
-          <label class="block text-[11px] font-semibold text-slate-600 mb-1">Pilih Identitas Guru / Staf:</label>
-          <select id="selectLoginGuru" class="w-full text-xs px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl">
-            <option value="">-- Pilih Nama Guru --</option>
-          </select>
+          <label class="block text-[11px] font-semibold text-slate-700 mb-1 flex items-center justify-between">
+            <span>Masukkan NIP / Kode Guru:</span>
+            <span class="text-[10px] text-indigo-600 font-mono">NIP Resmi</span>
+          </label>
+          <input type="text" id="inputLoginNip" onkeydown="if(event.key==='Enter') submitLoginGuru()" placeholder="Contoh: 198002152005011002" maxlength="25" class="w-full text-sm px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl font-mono tracking-wider focus:ring-2 focus:ring-indigo-500 text-center font-bold text-slate-800">
+          <p class="text-[11px] text-slate-400 mt-1 leading-tight">
+            Masukkan NIP atau Kode Pendidik Anda yang terdaftar di sekolah.
+          </p>
         </div>
         <div class="pt-2">
-          <button onclick="submitLoginGuru()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold py-2.5 rounded-xl shadow-xs transition">
-            Masuk sebagai Guru
+          <button type="button" onclick="submitLoginGuru()" class="w-full bg-indigo-600 hover:bg-indigo-700 active:scale-98 text-white text-xs font-bold py-2.5 rounded-xl shadow-xs transition flex items-center justify-center gap-1.5">
+            <i data-lucide="log-in" class="w-4 h-4"></i>
+            <span>Masuk sebagai Guru</span>
           </button>
         </div>
       </div>
@@ -957,6 +991,120 @@
     </div>
   </div>
 
+  <!-- ==================== MODAL EDIT PROFIL SISWA (NO HP ORANG TUA) ==================== -->
+  <div id="modalEditProfilSiswa" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl relative animate-in fade-in zoom-in duration-150">
+      
+      <button onclick="tutupModalEditProfilSiswa()" class="absolute top-5 right-5 text-slate-400 hover:text-slate-600 p-1 rounded-lg">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+
+      <div class="flex items-center space-x-3 mb-4">
+        <div class="w-10 h-10 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center flex-shrink-0">
+          <i data-lucide="phone-call" class="w-5 h-5"></i>
+        </div>
+        <div>
+          <h3 class="font-bold text-slate-900 text-base">Edit Kontak Orang Tua / Wali</h3>
+          <p class="text-xs text-slate-500">Pembaruan nomor WhatsApp aktif orang tua siswa</p>
+        </div>
+      </div>
+
+      <div class="space-y-3">
+        <!-- Info Siswa Readonly -->
+        <div class="p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs space-y-1">
+          <div class="flex justify-between">
+            <span class="text-slate-500">Nama Siswa:</span>
+            <span class="font-bold text-slate-800" id="editSiswaNamaBadge">-</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-slate-500">NISN & Kelas:</span>
+            <span class="font-mono text-slate-700" id="editSiswaNisnBadge">-</span>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Nomor HP / WhatsApp Orang Tua:</label>
+          <input type="tel" id="inputEditHpOrtu" placeholder="Contoh: 081234567890" maxlength="16" class="w-full text-xs px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl font-mono focus:ring-2 focus:ring-blue-500">
+          <p class="text-[11px] text-slate-400 mt-1">
+            Nomor ini digunakan untuk pengiriman laporan capaian, panggilan resmi, serta informasi darurat sekolah.
+          </p>
+        </div>
+
+        <div class="pt-2 flex items-center justify-end space-x-2">
+          <button type="button" onclick="tutupModalEditProfilSiswa()" class="text-xs font-semibold px-4 py-2 text-slate-600 hover:bg-slate-100 rounded-xl">
+            Batal
+          </button>
+          <button type="button" id="btnSimpanProfilSiswa" onclick="simpanProfilSiswa()" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-5 py-2.5 rounded-xl shadow-xs transition flex items-center gap-1.5">
+            <i data-lucide="save" class="w-4 h-4"></i>
+            <span>Simpan Perubahan</span>
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ==================== MODAL EDIT PROFIL GURU (BINAAN, NO HP, JABATAN) ==================== -->
+  <div id="modalEditProfilGuru" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl relative animate-in fade-in zoom-in duration-150">
+      
+      <button onclick="tutupModalEditProfilGuru()" class="absolute top-5 right-5 text-slate-400 hover:text-slate-600 p-1 rounded-lg">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+
+      <div class="flex items-center space-x-3 mb-4">
+        <div class="w-10 h-10 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center flex-shrink-0">
+          <i data-lucide="user-cog" class="w-5 h-5"></i>
+        </div>
+        <div>
+          <h3 class="font-bold text-slate-900 text-base">Edit Profil & Tugas Guru</h3>
+          <p class="text-xs text-slate-500">Perbarui jabatan, kelas/ekskul binaan, dan kontak Anda</p>
+        </div>
+      </div>
+
+      <div class="space-y-3">
+        <!-- Info Guru Readonly -->
+        <div class="p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs space-y-1">
+          <div class="flex justify-between">
+            <span class="text-slate-500">Nama Guru:</span>
+            <span class="font-bold text-slate-800" id="editGuruNamaBadge">-</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-slate-500">NIP:</span>
+            <span class="font-mono text-slate-700" id="editGuruNipBadge">-</span>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Jabatan / Tugas Utama:</label>
+          <input type="text" id="inputEditGuruJabatan" placeholder="Contoh: Wali Kelas 8-A / Guru BK / Pembina Ekskul" class="w-full text-xs px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-purple-500">
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Kelas / Bidang Binaan:</label>
+          <input type="text" id="inputEditGuruBinaan" placeholder="Contoh: 8-A / Futsal & Pramuka / Semua Kelas" class="w-full text-xs px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-purple-500">
+          <p class="text-[11px] text-slate-400 mt-1">Kelas atau rombel siswa yang Anda bimbing secara langsung.</p>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Kontak No. HP / WhatsApp Guru:</label>
+          <input type="tel" id="inputEditGuruHp" placeholder="Contoh: 081234500002" maxlength="16" class="w-full text-xs px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl font-mono focus:ring-2 focus:ring-purple-500">
+        </div>
+
+        <div class="pt-2 flex items-center justify-end space-x-2">
+          <button type="button" onclick="tutupModalEditProfilGuru()" class="text-xs font-semibold px-4 py-2 text-slate-600 hover:bg-slate-100 rounded-xl">
+            Batal
+          </button>
+          <button type="button" id="btnSimpanProfilGuru" onclick="simpanProfilGuru()" class="bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold px-5 py-2.5 rounded-xl shadow-xs transition flex items-center gap-1.5">
+            <i data-lucide="save" class="w-4 h-4"></i>
+            <span>Simpan Perubahan</span>
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
   <!-- JAVASCRIPT LOGIC & SINGLE SIGN-ON ENGINE -->
   <script>
     let appData = {
@@ -1068,6 +1216,8 @@
         document.getElementById('lblSiswaKelas').innerText = currentUser.kelas || '-';
         document.getElementById('lblSiswaNisn').innerText = currentUser.nisn || '-';
         document.getElementById('lblSiswaWali').innerText = currentUser.wali || '-';
+        const elHpOrtu = document.getElementById('lblSiswaHpOrtu');
+        if (elHpOrtu) elHpOrtu.innerText = currentUser.hp || 'Belum diisi';
       } else if (role === 'guru') {
         document.getElementById('view-guru').classList.remove('hidden');
         userPill.classList.remove('hidden');
@@ -1079,7 +1229,9 @@
         document.getElementById('lblGuruNama').innerText = currentUser.nama || '-';
         document.getElementById('lblGuruNip').innerText = currentUser.nip || '-';
         document.getElementById('lblGuruJabatan').innerText = currentUser.jabatan || '-';
-        document.getElementById('lblGuruBinaan').innerText = currentUser.kelas || '-';
+        document.getElementById('lblGuruBinaan').innerText = currentUser.binaan || currentUser.kelas || '-';
+        const elGuruHp = document.getElementById('lblGuruHp');
+        if (elGuruHp) elGuruHp.innerText = currentUser.hp || 'Belum diisi';
       } else if (role === 'admin') {
         document.getElementById('view-admin').classList.remove('hidden');
         userPill.classList.remove('hidden');
@@ -1102,7 +1254,6 @@
     }
 
     function bukaModalGantiPeran() {
-      populateModalDropdowns();
       document.getElementById('modalPilihPeran').classList.remove('hidden');
     }
 
@@ -1122,6 +1273,19 @@
           form.classList.add('hidden');
         }
       });
+
+      setTimeout(() => {
+        if (role === 'siswa') {
+          const el = document.getElementById('inputLoginNisn');
+          if (el) el.focus();
+        } else if (role === 'guru') {
+          const el = document.getElementById('inputLoginNip');
+          if (el) el.focus();
+        } else if (role === 'admin') {
+          const el = document.getElementById('inputLoginPin');
+          if (el) el.focus();
+        }
+      }, 100);
     }
 
     function pilihPeran(role) {
@@ -1129,54 +1293,21 @@
       pilihTabModalPeran(role);
     }
 
-    function populateModalDropdowns() {
-      // Dropdown Siswa
-      const selS = document.getElementById('selectLoginSiswa');
-      selS.innerHTML = '<option value="">-- Pilih Nama Anda --</option>';
-      (appData.siswaList || []).forEach(s => {
-        const opt = document.createElement('option');
-        const cNisn = formatNisn(s.nisn);
-        opt.value = cNisn;
-        opt.innerText = `${s.nama} (${s.kelas}) - NISN: ${cNisn}`;
-        selS.appendChild(opt);
-      });
-
-      // Dropdown Guru
-      const selG = document.getElementById('selectLoginGuru');
-      selG.innerHTML = '<option value="">-- Pilih Nama Guru --</option>';
-      (appData.guruList || []).forEach(g => {
-        const opt = document.createElement('option');
-        opt.value = g.nip || g.nama;
-        opt.innerText = `${g.nama} (${g.jabatan})`;
-        selG.appendChild(opt);
-      });
-    }
-
-    function onInputLoginNisnChanged() {
-      const inputNisn = formatNisn(document.getElementById('inputLoginNisn').value);
-      const match = (appData.siswaList || []).find(s => formatNisn(s.nisn) === inputNisn);
-      if (match) {
-        document.getElementById('selectLoginSiswa').value = formatNisn(match.nisn);
-      }
-    }
-
-    function onSelectLoginSiswaChanged() {
-      const selNisn = document.getElementById('selectLoginSiswa').value;
-      if (selNisn) {
-        document.getElementById('inputLoginNisn').value = selNisn;
-      }
-    }
-
     function submitLoginSiswa() {
-      const cNisn = formatNisn(document.getElementById('inputLoginNisn').value || document.getElementById('selectLoginSiswa').value);
+      const raw = document.getElementById('inputLoginNisn').value;
+      const cNisn = formatNisn(raw);
       if (!cNisn) {
-        Swal.fire('Perhatian', 'Silakan ketik atau pilih NISN Anda!', 'warning');
+        Swal.fire('Perhatian', 'Silakan ketik 10 Digit NISN Anda!', 'warning');
         return;
       }
 
       const match = (appData.siswaList || []).find(s => formatNisn(s.nisn) === cNisn);
       if (!match) {
-        Swal.fire('Tidak Ditemukan', `NISN ${cNisn} tidak terdaftar di database master siswa.`, 'error');
+        Swal.fire({
+          title: 'NISN Tidak Ditemukan',
+          html: `NISN <b>${cNisn}</b> tidak terdaftar di database master siswa sekolah.<br><small class="text-slate-400">Pastikan 10 digit nomor NISN sudah sesuai atau hubungi admin sekolah.</small>`,
+          icon: 'error'
+        });
         return;
       }
 
@@ -1184,9 +1315,11 @@
         nisn: cNisn,
         nama: match.nama,
         kelas: match.kelas,
-        wali: match.wali
+        wali: match.wali,
+        hp: match.hp || ''
       });
       tutupModalPilihPeran();
+      document.getElementById('inputLoginNisn').value = '';
       Swal.fire({
         toast: true,
         position: 'top-end',
@@ -1198,22 +1331,37 @@
     }
 
     function submitLoginGuru() {
-      const val = document.getElementById('selectLoginGuru').value;
-      if (!val) {
-        Swal.fire('Perhatian', 'Silakan pilih identitas guru terlebih dahulu!', 'warning');
+      const raw = document.getElementById('inputLoginNip').value;
+      const cleanNip = String(raw || '').trim();
+      if (!cleanNip) {
+        Swal.fire('Perhatian', 'Silakan masukkan NIP atau Kode Guru Anda!', 'warning');
         return;
       }
 
-      const match = (appData.guruList || []).find(g => (g.nip && g.nip === val) || g.nama === val);
-      if (!match) return;
+      const match = (appData.guruList || []).find(g => {
+        const nip = String(g.nip || '').trim().toLowerCase();
+        return nip === cleanNip.toLowerCase();
+      });
+
+      if (!match) {
+        Swal.fire({
+          title: 'NIP Tidak Ditemukan',
+          html: `NIP <b>${cleanNip}</b> tidak terdaftar di database master pendidik.<br><small class="text-slate-400">Pastikan NIP sudah sesuai atau tanyakan ke administrator sekolah.</small>`,
+          icon: 'error'
+        });
+        return;
+      }
 
       simpanSesiPengguna('guru', {
         nip: match.nip,
         nama: match.nama,
         jabatan: match.jabatan,
-        kelas: match.kelas
+        binaan: match.kelas || match.binaan || '-',
+        kelas: match.kelas || '-',
+        hp: match.hp || ''
       });
       tutupModalPilihPeran();
+      document.getElementById('inputLoginNip').value = '';
       Swal.fire({
         toast: true,
         position: 'top-end',
@@ -1222,6 +1370,123 @@
         showConfirmButton: false,
         timer: 1600
       });
+    }
+
+    // ==========================================
+    // EDIT PROFIL MANDIRI SISWA & GURU
+    // ==========================================
+    function bukaModalEditProfilSiswa() {
+      if (!currentUser || currentUser.role !== 'siswa') return;
+      document.getElementById('editSiswaNamaBadge').innerText = currentUser.nama || '-';
+      document.getElementById('editSiswaNisnBadge').innerText = `${currentUser.nisn || '-'} (Kelas ${currentUser.kelas || '-'})`;
+      document.getElementById('inputEditHpOrtu').value = currentUser.hp || '';
+      document.getElementById('modalEditProfilSiswa').classList.remove('hidden');
+      setTimeout(() => document.getElementById('inputEditHpOrtu').focus(), 100);
+    }
+
+    function tutupModalEditProfilSiswa() {
+      document.getElementById('modalEditProfilSiswa').classList.add('hidden');
+    }
+
+    async function simpanProfilSiswa() {
+      if (!currentUser || currentUser.role !== 'siswa') return;
+      const noHpOrtu = document.getElementById('inputEditHpOrtu').value.trim();
+
+      Swal.fire({
+        title: 'Menyimpan...',
+        text: 'Memperbarui nomor kontak orang tua di database...',
+        allowOutsideClick: false,
+        didOpen: () => Swal.showLoading()
+      });
+
+      const res = await callPortalApi('updateProfilSiswa', {
+        nisn: currentUser.nisn,
+        noHpOrtu: noHpOrtu
+      });
+
+      if (res && res.success) {
+        currentUser.hp = noHpOrtu;
+        simpanSesiPengguna('siswa', currentUser);
+
+        // Update di cache appData lokal
+        const match = (appData.siswaList || []).find(s => formatNisn(s.nisn) === formatNisn(currentUser.nisn));
+        if (match) match.hp = noHpOrtu;
+
+        const elHp = document.getElementById('lblSiswaHpOrtu');
+        if (elHp) elHp.innerText = noHpOrtu || 'Belum diisi';
+
+        tutupModalEditProfilSiswa();
+        Swal.fire('Berhasil Disimpan! 🟢', 'Nomor HP Orang Tua berhasil diperbarui.', 'success');
+      } else {
+        Swal.fire('Gagal Menyimpan', (res && res.error) || 'Terjadi kesalahan saat menyimpan ke database.', 'error');
+      }
+    }
+
+    function bukaModalEditProfilGuru() {
+      if (!currentUser || currentUser.role !== 'guru') return;
+      document.getElementById('editGuruNamaBadge').innerText = currentUser.nama || '-';
+      document.getElementById('editGuruNipBadge').innerText = currentUser.nip || '-';
+      document.getElementById('inputEditGuruJabatan').value = currentUser.jabatan || '';
+      document.getElementById('inputEditGuruBinaan').value = currentUser.binaan || currentUser.kelas || '';
+      document.getElementById('inputEditGuruHp').value = currentUser.hp || '';
+      document.getElementById('modalEditProfilGuru').classList.remove('hidden');
+      setTimeout(() => document.getElementById('inputEditGuruJabatan').focus(), 100);
+    }
+
+    function tutupModalEditProfilGuru() {
+      document.getElementById('modalEditProfilGuru').classList.add('hidden');
+    }
+
+    async function simpanProfilGuru() {
+      if (!currentUser || currentUser.role !== 'guru') return;
+      const jabatan = document.getElementById('inputEditGuruJabatan').value.trim();
+      const kelasBinaan = document.getElementById('inputEditGuruBinaan').value.trim();
+      const noHp = document.getElementById('inputEditGuruHp').value.trim();
+
+      if (!jabatan) {
+        Swal.fire('Perhatian', 'Jabatan / Tugas Utama tidak boleh dikosongkan!', 'warning');
+        return;
+      }
+
+      Swal.fire({
+        title: 'Menyimpan...',
+        text: 'Memperbarui profil guru di database...',
+        allowOutsideClick: false,
+        didOpen: () => Swal.showLoading()
+      });
+
+      const res = await callPortalApi('updateProfilGuru', {
+        nip: currentUser.nip,
+        kelasBinaan: kelasBinaan,
+        noHp: noHp,
+        jabatan: jabatan
+      });
+
+      if (res && res.success) {
+        currentUser.jabatan = jabatan;
+        currentUser.binaan = kelasBinaan;
+        currentUser.kelas = kelasBinaan;
+        currentUser.hp = noHp;
+        simpanSesiPengguna('guru', currentUser);
+
+        // Update di cache appData lokal
+        const match = (appData.guruList || []).find(g => String(g.nip).trim().toLowerCase() === String(currentUser.nip).trim().toLowerCase());
+        if (match) {
+          match.jabatan = jabatan;
+          match.kelas = kelasBinaan;
+          match.hp = noHp;
+        }
+
+        document.getElementById('lblGuruJabatan').innerText = jabatan;
+        document.getElementById('lblGuruBinaan').innerText = kelasBinaan || '-';
+        const elGuruHp = document.getElementById('lblGuruHp');
+        if (elGuruHp) elGuruHp.innerText = noHp || 'Belum diisi';
+
+        tutupModalEditProfilGuru();
+        Swal.fire('Berhasil Disimpan! 🟢', 'Profil dan binaan Anda berhasil diperbarui.', 'success');
+      } else {
+        Swal.fire('Gagal Menyimpan', (res && res.error) || 'Terjadi kesalahan saat menyimpan ke database.', 'error');
+      }
     }
 
     // ==========================================
@@ -1267,6 +1532,8 @@
           else if (action === 'simpanUrlAplikasi') runner.simpanUrlAplikasi(payload.appKey, payload.url, payload.pin);
           else if (action === 'simpanSiswaBaru') runner.simpanSiswaBaru(payload.siswa, payload.pin);
           else if (action === 'simpanGuruBaru') runner.simpanGuruBaru(payload.guru, payload.pin);
+          else if (action === 'updateProfilSiswa') runner.updateProfilSiswa(payload.nisn, payload.noHpOrtu);
+          else if (action === 'updateProfilGuru') runner.updateProfilGuru(payload.nip, payload.kelasBinaan, payload.noHp, payload.jabatan);
           else if (action === 'syncDataKeSemuaAplikasi') runner.syncDataKeSemuaAplikasi(payload.pin);
           else resolve({ success: false, error: 'Aksi tidak dikenal: ' + action });
         });
@@ -1325,6 +1592,18 @@
         if (!appData.guruList) appData.guruList = [];
         appData.guruList.unshift(payload.guru);
         return { success: true, message: 'Guru tersimpan di memori lokal' };
+      } else if (action === 'updateProfilSiswa') {
+        const match = (appData.siswaList || []).find(s => formatNisn(s.nisn) === formatNisn(payload.nisn));
+        if (match) match.hp = payload.noHpOrtu;
+        return { success: true, message: 'No. HP Orang Tua berhasil diperbarui (Demo mode)' };
+      } else if (action === 'updateProfilGuru') {
+        const match = (appData.guruList || []).find(g => String(g.nip).trim().toLowerCase() === String(payload.nip).trim().toLowerCase());
+        if (match) {
+          match.jabatan = payload.jabatan;
+          match.kelas = payload.kelasBinaan;
+          match.hp = payload.noHp;
+        }
+        return { success: true, message: 'Profil Guru berhasil diperbarui (Demo mode)' };
       } else if (action === 'syncDataKeSemuaAplikasi') {
         return { success: true, message: 'Sinkronisasi demo berhasil dijalankan' };
       }
